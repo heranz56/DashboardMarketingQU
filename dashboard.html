@@ -10,21 +10,63 @@
 <body>
     
     <div class="dashboard-container">
-        <h1>Selamat Datang di Dashboard</h1>
+        <h1 id="welcome-message">Memuat...</h1>
         <p>Anda telah berhasil login.</p>
-        <div class="dashboard-menu">
-            <!-- Nanti kita bisa tambahkan menu di sini -->
+        
+        <!-- Di sinilah konten dinamis akan ditampilkan -->
+        <div id="dashboard-content" class="dashboard-menu" style="min-height: 150px; text-align: left; background: #f9f9f9; padding: 20px; border-radius: 8px;">
+            <p>Memuat konten dashboard...</p>
         </div>
+        
         <button id="logout-button" class="btn btn-danger">LOGOUT</button>
     </div>
 
     <script>
-        document.getElementById('logout-button').addEventListener('click', function() {
+        const welcomeMessage = document.getElementById('welcome-message');
+        const dashboardContent = document.getElementById('dashboard-content');
+        const logoutButton = document.getElementById('logout-button');
+        
+        // GANTI DENGAN URL WEB APP ANDA
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
+
+        // Fungsi yang berjalan saat halaman dimuat
+        window.onload = () => {
+            // 1. Periksa Sesi (Security Gate)
+            const userDataString = sessionStorage.getItem('loggedInUser');
+            if (!userDataString) {
+                // Jika tidak ada data user, tendang kembali ke login
+                window.location.href = 'login.html'; // atau index.html
+                return;
+            }
+            
+            const user = JSON.parse(userDataString);
+
+            // 2. Sapa Pengguna
+            welcomeMessage.textContent = `Selamat Datang, ${user.nama_lengkap}!`;
+
+            // 3. Minta Konten Dashboard Sesuai Role
+            fetch(`${webAppUrl}?action=getDashboardContent&role_id=${user.id_role}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        dashboardContent.innerHTML = data.htmlContent;
+                    } else {
+                        dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat konten: ${data.message}</p>`;
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    dashboardContent.innerHTML = `<p style="color: red;">Gagal terhubung ke server untuk memuat konten.</p>`;
+                });
+        };
+
+        // Fungsi Logout
+        logoutButton.addEventListener('click', function() {
+            // Hapus data sesi dari browser
+            sessionStorage.removeItem('loggedInUser');
             // Arahkan pengguna kembali ke halaman login
-            // Gunakan 'index.html' jika Anda sudah mengganti nama 'login.html'
-            window.location.href = 'index.html'; 
+            window.location.href = 'login.html'; // atau index.html
         });
     </script>
 </body>
-
 </html>
