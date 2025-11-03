@@ -1,175 +1,122 @@
-/* General Styling */
+/* =================================================================
+   RESET & KONFIGURASI DASAR - INSPIRASI DRIBBBLE
+   ================================================================= */
 :root {
-    --primary-color: #4F46E5;
-    --secondary-color: #F3F4F6;
-    --text-color: #1F2937;
-    --subtle-text-color: #6B7280;
-    --background-color: #FFFFFF;
-    --border-color: #D1D5DB;
+    --primary-color: #4A69FF; /* Biru cerah sebagai aksen */
+    --background-color-dark: #121629; /* Background utama gelap kebiruan */
+    --surface-color-dark: #1A1F36; /* Warna untuk sidebar, header, card */
+    --border-color-dark: #29304E; /* Warna border yang soft */
+    --text-primary-dark: #FFFFFF; /* Teks utama putih */
+    --text-secondary-dark: #8C94B2; /* Teks sekunder abu-abu kebiruan */
+
+    /* Variabel untuk Light Mode */
+    --background-color-light: #F7F8FC;
+    --surface-color-light: #FFFFFF;
+    --border-color-light: #EAEBF3;
+    --text-primary-light: #121629;
+    --text-secondary-light: #6E7693;
+
+    --sidebar-width: 260px;
+    --header-height: 80px;
 }
 
-body {
-    margin: 0;
-    font-family: 'Poppins', sans-serif;
-    background-color: var(--background-color);
-    color: var(--text-color);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Poppins', sans-serif; transition: background-color 0.3s, color 0.3s; }
+a { text-decoration: none; color: inherit; }
+
+/* Tema Light & Dark */
+body.light-mode {
+    --bg: var(--background-color-light); --surface: var(--surface-color-light);
+    --text-primary: var(--text-primary-light); --text-secondary: var(--text-secondary-light);
+    --border: var(--border-color-light);
 }
-
-.container {
-    display: flex;
-    width: 100%;
-    max-width: 1200px;
-    min-height: 90vh;
-    background-color: var(--background-color);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    border-radius: 20px;
-    overflow: hidden;
+body.dark-mode {
+    --bg: var(--background-color-dark); --surface: var(--surface-color-dark);
+    --text-primary: var(--text-primary-dark); --text-secondary: var(--text-secondary-dark);
+    --border: var(--border-color-dark);
 }
+body { background-color: var(--bg); color: var(--text-primary); }
 
-.visual-side {
-    width: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
-    text-align: center;
-    position: relative;
-    background-image: url('https://images.pexels.com/photos/830891/pexels-photo-830891.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
-    background-size: cover;
-    background-position: center;
-}
-
-.visual-side::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(17, 24, 39, 0.6);
-    z-index: 1;
-}
-
-.visual-content {
-    position: relative;
-    z-index: 2;
-    /* === PERBAIKAN: Menambahkan baris ini untuk teks alternatif === */
-    color: #E5E7EB; 
-}
-
-.visual-content .illustration {
-    max-width: 150px;
-    height: auto;
-    margin-bottom: 30px;
-}
-
-.visual-content h2 {
-    font-size: 36px;
-    color: #FFFFFF;
-    margin-bottom: 15px;
-}
-
-.visual-content p {
-    font-size: 18px;
-    color: #E5E7EB;
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-/* Form Styling */
-.form-side { width: 50%; display: flex; justify-content: center; align-items: center; padding: 40px; }
-.form-content { width: 100%; max-width: 400px; }
-.form-header { margin-bottom: 30px; text-align: center; }
-.form-header h2 { font-size: 32px; margin-bottom: 10px; }
-.form-header p { color: var(--subtle-text-color); }
-.input-group { margin-bottom: 20px; }
-.input-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
-.input-group input { width: 100%; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; box-sizing: border-box; transition: border-color 0.3s, box-shadow 0.3s; }
-.input-group input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); }
-.forgot-password { display: block; text-align: right; margin-bottom: 25px; font-size: 14px; color: var(--primary-color); text-decoration: none; font-weight: 600; }
-.btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background-color 0.3s, box-shadow 0.3s; }
-.btn-primary { background-color: var(--primary-color); color: white; }
-.btn-primary:hover { background-color: #4338CA; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3); }
-.btn-secondary { background-color: #FFFFFF; color: var(--text-color); border: 1px solid var(--border-color); display: flex; justify-content: center; align-items: center; gap: 10px; }
-.btn-secondary img { width: 20px; height: 20px; }
-.divider { display: flex; align-items: center; text-align: center; margin: 30px 0; color: var(--subtle-text-color); }
-.divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-color); }
-.divider span { padding: 0 15px; font-size: 14px; }
-.form-footer p, .approval-info { color: var(--subtle-text-color); font-size: 14px; }
-.form-footer a { color: var(--primary-color); font-weight: 600; text-decoration: none; }
-.approval-info { text-align: center; margin-top: 15px; font-style: italic; font-size: 13px; }
-@media (max-width: 992px) { .visual-side { display: none; } .form-side { width: 100%; } .container { flex-direction: column; min-height: 100vh; border-radius: 0; } }
-
-/* === PENAMBAHAN BARU UNTUK HALAMAN DASHBOARD === */
-
+/* =================================================================
+   STRUKTUR UTAMA DASHBOARD
+   ================================================================= */
 .dashboard-layout { display: flex; position: relative; }
 .sidebar {
     width: var(--sidebar-width); height: 100vh; background-color: var(--surface);
     border-right: 1px solid var(--border); position: fixed; top: 0; left: 0;
-    display: flex; flex-direction: column; transition: transform 0.3s ease-in-out, background-color 0.3s; z-index: 1000;
+    display: flex; flex-direction: column; transition: 0.3s; z-index: 1000;
 }
 .main-content { flex: 1; margin-left: var(--sidebar-width); display: flex; flex-direction: column; }
 
-/* ... (Semua gaya Sidebar & Header tetap sama seperti sebelumnya) ... */
-.sidebar-header { /* ... sama ... */ }
-.sidebar-nav { /* ... sama ... */ }
-.nav-title { /* ... sama ... */ }
-.nav-item { /* ... sama ... */ }
-.sidebar-footer { /* ... sama ... */ }
-.theme-switch-wrapper { /* ... sama ... */ }
-.theme-switch { /* ... sama ... */ }
-.slider { /* ... sama ... */ }
-.header { /* ... sama ... */ }
-.header-left { display: flex; align-items: center; }
-
-/* [DIKEMBALIKAN] Gaya untuk tombol hamburger */
-.hamburger-btn {
-    display: none; /* Sembunyikan di desktop secara default */
-    background: none; border: none; font-size: 20px; cursor: pointer;
-    margin-right: 15px; color: var(--text-secondary);
+/* =================================================================
+   SIDEBAR & NAVIGASI
+   ================================================================= */
+.sidebar-header {
+    display: flex; align-items: center; gap: 15px; padding: 25px;
+    border-bottom: 1px solid var(--border); font-size: 24px; font-weight: 600;
 }
-
-.header-title { /* ... sama ... */ }
-.header-right { /* ... sama ... */ }
-.content-area { /* ... sama ... */ }
-
-/* [BARU] Gaya untuk overlay */
-.overlay {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+.sidebar-header i { color: var(--primary-color); }
+.sidebar-nav { flex: 1; padding: 15px; }
+.nav-title { padding: 10px 15px; font-size: 12px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+.nav-item {
+    display: flex; align-items: center; padding: 12px 15px; margin-bottom: 5px;
+    border-radius: 8px; font-weight: 500; color: var(--text-secondary);
+    transition: 0.2s;
 }
+.nav-item i { width: 20px; margin-right: 15px; text-align: center; }
+.nav-item:hover { color: var(--text-primary); }
+.nav-item.active {
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 12px rgba(74, 105, 255, 0.3);
+}
+.sidebar-footer { padding: 15px; border-top: 1px solid var(--border); }
+.theme-switch-wrapper {
+    display: flex; align-items: center; justify-content: space-between; padding: 12px 15px;
+    border-radius: 8px; cursor: pointer; color: var(--text-secondary);
+}
+.theme-switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+.theme-switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; inset: 0; background-color: #ccc; border-radius: 34px; transition: .4s; }
+.slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .4s; }
+input:checked + .slider { background-color: var(--primary-color); }
+input:checked + .slider:before { transform: translateX(20px); }
 
 /* =================================================================
-   DESAIN RESPONSIVE (UNTUK MOBILE)
+   HEADER & KONTEN UTAMA
+   ================================================================= */
+.header {
+    height: var(--header-height); background-color: var(--surface); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; padding: 0 30px;
+    position: sticky; top: 0; z-index: 900;
+}
+.header-left { display: flex; align-items: center; }
+.hamburger-btn { display: none; background: none; border: none; font-size: 20px; cursor: pointer; margin-right: 20px; color: var(--text-secondary); }
+.header-title { font-size: 22px; font-weight: 600; color: var(--text-primary); }
+.header-right { display: flex; align-items: center; gap: 20px; }
+.search-bar { display: flex; align-items: center; background: var(--bg); padding: 8px 15px; border-radius: 8px; }
+.search-bar i { color: var(--text-secondary); }
+.search-bar input { background: none; border: none; outline: none; color: var(--text-primary); margin-left: 10px; width: 200px; }
+.user-profile { display: flex; align-items: center; gap: 10px; }
+.user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+
+.content-area { padding: 30px; }
+.card {
+    background-color: var(--surface);
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+}
+.card-header { border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; }
+.card-header h3 { font-size: 18px; }
+
+/* =================================================================
+   RESPONSIVE
    ================================================================= */
 @media (max-width: 992px) {
-    .sidebar {
-        transform: translateX(-100%); /* Sembunyikan sidebar ke kiri */
-    }
-
-    .sidebar.show {
-        transform: translateX(0); /* Tampilkan sidebar */
-    }
-    
-    .overlay.show {
-        display: block; /* Tampilkan overlay saat sidebar aktif */
-    }
-
-    .main-content {
-        margin-left: 0;
-    }
-
-    .hamburger-btn {
-        display: block; /* Tampilkan tombol hamburger di mobile */
-    }
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.show { transform: translateX(0); }
+    .main-content { margin-left: 0; }
+    .hamburger-btn { display: block; }
+    .search-bar { display: none; } /* Sembunyikan search bar di mobile */
 }
