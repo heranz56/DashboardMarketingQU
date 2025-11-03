@@ -70,69 +70,36 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <!-- Skrip Logika Login -->
+   // === SCRIPT BARU UNTUK index.html (LOGIN) ===
     <script>
         const form = document.forms['login-form'];
         const loginButton = document.querySelector('button[type="submit"]');
 
         form.addEventListener('submit', function(e) {
-            e.preventDefault(); // Mencegah form me-refresh halaman
-
-            // PASTIKAN URL INI SUDAH BENAR
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
+            e.preventDefault();
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ_NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
             
             loginButton.disabled = true;
             loginButton.textContent = 'MEMPROSES...';
 
             const formData = new FormData(form);
+            const searchParams = new URLSearchParams(formData);
 
-            fetch(webAppUrl, {
-                method: 'POST',
-                body: formData
-            })
+            fetch(`${webAppUrl}?${searchParams.toString()}`) // Mengirim data sebagai parameter GET
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success' && data.user) {
-                    // Simpan data pengguna ke sessionStorage browser
                     sessionStorage.setItem('loggedInUser', JSON.stringify(data.user));
-                    
-                    // Tampilkan notifikasi sukses
-                    Toastify({
-                        text: "Login berhasil! Mengarahkan...",
-                        duration: 1500,
-                        gravity: "bottom",
-                        position: "right",
-                        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
-                    }).showToast();
-
-                    // Arahkan ke halaman dashboard setelah jeda singkat
-                    setTimeout(() => {
-                        window.location.href = 'dashboard.html';
-                    }, 1500);
-
+                    Toastify({ text: "Login berhasil!", ... }).showToast();
+                    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1500);
                 } else {
-                    // Tampilkan notifikasi error dari server
-                    Toastify({
-                        text: data.message || "Terjadi kesalahan.",
-                        duration: 3000,
-                        gravity: "bottom",
-                        position: "right",
-                        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                    }).showToast();
+                    Toastify({ text: data.message, ... }).showToast();
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                // Tampilkan notifikasi error koneksi
-                Toastify({
-                    text: "Terjadi masalah koneksi. Coba lagi.",
-                    duration: 3000,
-                    gravity: "bottom",
-                    position: "right",
-                    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                }).showToast();
+                Toastify({ text: "Masalah koneksi.", ... }).showToast();
             })
             .finally(() => {
-                // Aktifkan kembali tombol setelah proses selesai
                 loginButton.disabled = false;
                 loginButton.textContent = 'MASUK';
             });
@@ -140,4 +107,5 @@
     </script>
 </body>
 </html>
+
 
