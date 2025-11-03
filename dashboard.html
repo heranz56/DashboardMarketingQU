@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Manajemen Marketing</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    
+    <div class="dashboard-container">
+        <h1>Selamat Datang di Dashboard</h1>
+        <p>Anda telah berhasil login.</p>
+        <div class="dashboard-menu">
+            <!-- Nanti kita bisa tambahkan menu di sini -->
+        </div>
+        <button id="logout-button" class="btn btn-danger">LOGOUT</button>
+    </div>
+
+    <script>
+        document.getElementById('logout-button').addEventListener('click', function() {
+            // Arahkan pengguna kembali ke halaman login
+            // Gunakan 'index.html' jika Anda sudah mengganti nama 'login.html'
+            window.location.href = 'login.html'; 
+        });
+    </script>
+</body>
+</html>
