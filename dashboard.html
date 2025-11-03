@@ -41,7 +41,64 @@
     </div>
 
     <script>
-        // ... (Script akan kita perbarui di langkah berikutnya)
+        // Elemen UI
+        const userNameEl = document.getElementById('user-name');
+        const dashboardContent = document.getElementById('dashboard-content');
+        const logoutButton = document.getElementById('logout-button');
+        const themeCheckbox = document.getElementById('theme-checkbox');
+        const hamburgerButton = document.getElementById('hamburger-button'); // [DIKEMBALIKAN]
+        const sidebar = document.querySelector('.sidebar');                 // [DIKEMBALIKAN]
+        const overlay = document.querySelector('.overlay');                 // [BARU]
+
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
+
+        // Fungsi yang berjalan saat halaman dimuat
+        window.onload = () => {
+            // ... (Logika pemeriksaan sesi tetap sama) ...
+        };
+
+        function loadDashboardContent(roleId) {
+            // ... (Fungsi ini tetap sama) ...
+        }
+
+        // Fungsi Logout
+        logoutButton.addEventListener('click', (e) => {
+            // ... (Fungsi ini tetap sama) ...
+        });
+        
+        // Fungsi untuk Toggle Dark/Light Mode
+        themeCheckbox.addEventListener('change', function() {
+            // ... (Fungsi ini tetap sama) ...
+        });
+
+        // [DIKEMBALIKAN & DISEMPURNAKAN] Fungsi untuk tombol Hamburger
+        hamburgerButton.addEventListener('click', () => {
+            sidebar.classList.add('show');
+            overlay.classList.add('show');
+        });
+
+        // Fungsi untuk menutup sidebar
+        function closeSidebar() {
+            sidebar.classList.remove('show');
+            overlay.classList.remove('show');
+        }
+
+        // Tutup sidebar saat overlay diklik
+        overlay.addEventListener('click', closeSidebar);
+        
+        // Tutup sidebar saat salah satu menu item diklik (opsional, tapi bagus)
+        document.querySelectorAll('.sidebar .nav-item').forEach(item => {
+            item.addEventListener('click', (e) => {
+                if (window.innerWidth <= 992) { // Hanya berlaku di mobile
+                    // Jika bukan tombol logout atau switch tema
+                    if (!e.currentTarget.id || (e.currentTarget.id !== 'logout-button' && e.currentTarget.id !== 'theme-switch-wrapper')) {
+                        closeSidebar();
+                    }
+                }
+            });
+        });
+
     </script>
 </body>
 </html>
+
