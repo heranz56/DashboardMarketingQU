@@ -5,69 +5,83 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Manajemen Marketing</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- [BARU] Menambahkan library ikon Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 </head>
 <body>
-    
-    <div class="dashboard-container">
-        <h1 id="welcome-message">Memuat...</h1>
-        <p>Anda telah berhasil login.</p>
-        
-        <!-- Di sinilah konten dinamis akan ditampilkan -->
-        <div id="dashboard-content" class="dashboard-menu" style="min-height: 150px; text-align: left; background: #f9f9f9; padding: 20px; border-radius: 8px;">
-            <p>Memuat konten dashboard...</p>
+
+    <div class="dashboard-layout">
+        <!-- ===== SIDEBAR (MENU KIRI) ===== -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <span class="logo-text">Dashboard</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Dashboard Utama</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-file-pen"></i>
+                    <span>Register Aplikasi</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-truck"></i>
+                    <span>Register Pengiriman</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-hand-holding-dollar"></i>
+                    <span>Register Klaim</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-calculator"></i>
+                    <span>Simulasi Premi</span>
+                </a>
+                <h6 class="nav-title">ADMINISTRASI</h6>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-users-cog"></i>
+                    <span>Pengaturan User</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Pengaturan Role</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="#" id="logout-button" class="nav-item">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- ===== KONTEN UTAMA (KANAN) ===== -->
+        <div class="main-content">
+            <!-- ===== HEADER (BILAH ATAS) ===== -->
+            <header class="header">
+                <div class="header-left">
+                    <button id="hamburger-button" class="hamburger-btn">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <h1 class="header-title">Dashboard Utama</h1>
+                </div>
+                <div id="user-profile" class="header-right">
+                    <span id="user-name">Memuat...</span>
+                    <i class="fa-solid fa-user-circle"></i>
+                </div>
+            </header>
+
+            <!-- ===== AREA KONTEN DINAMIS ===== -->
+            <main id="dashboard-content" class="content-area">
+                <!-- Konten dinamis berdasarkan role akan dimuat di sini oleh JavaScript -->
+                <p>Memuat konten dashboard...</p>
+            </main>
         </div>
-        
-        <button id="logout-button" class="btn btn-danger">LOGOUT</button>
     </div>
 
     <script>
-        const welcomeMessage = document.getElementById('welcome-message');
-        const dashboardContent = document.getElementById('dashboard-content');
-        const logoutButton = document.getElementById('logout-button');
-        
-        // GANTI DENGAN URL WEB APP ANDA
-        const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
-
-        // Fungsi yang berjalan saat halaman dimuat
-        window.onload = () => {
-            // 1. Periksa Sesi (Security Gate)
-            const userDataString = sessionStorage.getItem('loggedInUser');
-            if (!userDataString) {
-                // Jika tidak ada data user, tendang kembali ke login
-                window.location.href = 'index.html'; // atau index.html
-                return;
-            }
-            
-            const user = JSON.parse(userDataString);
-
-            // 2. Sapa Pengguna
-            welcomeMessage.textContent = `Selamat Datang, ${user.nama_lengkap}!`;
-
-            // 3. Minta Konten Dashboard Sesuai Role
-            fetch(`${webAppUrl}?action=getDashboardContent&role_id=${user.id_role}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        dashboardContent.innerHTML = data.htmlContent;
-                    } else {
-                        dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat konten: ${data.message}</p>`;
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    dashboardContent.innerHTML = `<p style="color: red;">Gagal terhubung ke server untuk memuat konten.</p>`;
-                });
-        };
-
-        // Fungsi Logout
-        logoutButton.addEventListener('click', function() {
-            // Hapus data sesi dari browser
-            sessionStorage.removeItem('loggedInUser');
-            // Arahkan pengguna kembali ke halaman login
-            window.location.href = 'index.html'; // atau index.html
-        });
+        // ... (Script untuk memuat konten dan logout akan ditambahkan di langkah berikutnya)
     </script>
 </body>
 </html>
-
