@@ -29,6 +29,7 @@ body {
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
     border-radius: 20px;
     overflow: hidden;
+   align-items: center;
 }
 
 /* Sisi Kiri (Visual) untuk Form */
@@ -235,3 +236,4 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 /* Gaya untuk dashboard-container (halaman sementara) */
 .dashboard-container { /* Gaya lama ini tidak lagi diperlukan jika menggunakan layout baru */ }
+
