@@ -6,64 +6,34 @@
     <title>Dashboard - Manajemen Marketing</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- [BARU] Menambahkan library ikon Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 </head>
 <body>
 
     <div class="dashboard-layout">
-        <!-- ===== SIDEBAR (MENU KIRI) ===== -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <span class="logo-text">Dashboard</span>
             </div>
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item active">
-                    <i class="fa-solid fa-house"></i>
-                    <span>Dashboard Utama</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fa-solid fa-file-pen"></i>
-                    <span>Register Aplikasi</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fa-solid fa-truck"></i>
-                    <span>Register Pengiriman</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fa-solid fa-hand-holding-dollar"></i>
-                    <span>Register Klaim</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fa-solid fa-calculator"></i>
-                    <span>Simulasi Premi</span>
-                </a>
+                <a href="#" class="nav-item active"><i class="fa-solid fa-house"></i><span>Dashboard Utama</span></a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-file-pen"></i><span>Register Aplikasi</span></a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-truck"></i><span>Register Pengiriman</span></a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-hand-holding-dollar"></i><span>Register Klaim</span></a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-calculator"></i><span>Simulasi Premi</span></a>
                 <h6 class="nav-title">ADMINISTRASI</h6>
-                <a href="#" class="nav-item">
-                    <i class="fa-solid fa-users-cog"></i>
-                    <span>Pengaturan User</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fa-solid fa-user-shield"></i>
-                    <span>Pengaturan Role</span>
-                </a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-users-cog"></i><span>Pengaturan User</span></a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-user-shield"></i><span>Pengaturan Role</span></a>
             </nav>
             <div class="sidebar-footer">
-                <a href="#" id="logout-button" class="nav-item">
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Logout</span>
-                </a>
+                <a href="#" id="logout-button" class="nav-item"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
             </div>
         </aside>
 
-        <!-- ===== KONTEN UTAMA (KANAN) ===== -->
         <div class="main-content">
-            <!-- ===== HEADER (BILAH ATAS) ===== -->
             <header class="header">
                 <div class="header-left">
-                    <button id="hamburger-button" class="hamburger-btn">
-                        <i class="fa-solid fa-bars"></i>
-                    </button>
+                    <button id="hamburger-button" class="hamburger-btn"><i class="fa-solid fa-bars"></i></button>
                     <h1 class="header-title">Dashboard Utama</h1>
                 </div>
                 <div id="user-profile" class="header-right">
@@ -72,68 +42,76 @@
                 </div>
             </header>
 
-            <!-- ===== AREA KONTEN DINAMIS ===== -->
             <main id="dashboard-content" class="content-area">
-                <!-- Konten dinamis berdasarkan role akan dimuat di sini oleh JavaScript -->
                 <p>Memuat konten dashboard...</p>
             </main>
         </div>
     </div>
 
     <script>
-        // Elemen-elemen UI
+        // Elemen UI
         const userNameEl = document.getElementById('user-name');
         const dashboardContent = document.getElementById('dashboard-content');
         const logoutButton = document.getElementById('logout-button');
         const hamburgerButton = document.getElementById('hamburger-button');
         const sidebar = document.querySelector('.sidebar');
         
-        // GANTI DENGAN URL WEB APP ANDA
+        // Ganti dengan URL Web App Anda
         const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
 
         // Fungsi yang berjalan saat halaman dimuat
         window.onload = () => {
             const userDataString = sessionStorage.getItem('loggedInUser');
             
-            // Periksa Sesi Keamanan
+            // Gerbang Keamanan Utama
             if (!userDataString) {
-                // Jika tidak ada data user, langsung tendang kembali ke login.
-                // Penting: Gunakan 'index.html' jika itu adalah halaman login utama Anda.
-                window.location.replace('login.html'); 
-                return; // Hentikan eksekusi script lebih lanjut
+                window.location.replace('login.html'); // atau index.html
+                return; 
             }
             
             try {
                 const user = JSON.parse(userDataString);
-
-                // Sapa Pengguna di Header
                 userNameEl.textContent = user.nama_lengkap;
-
-                // Minta Konten Dashboard Sesuai Role
                 loadDashboardContent(user.id_role);
-
             } catch (error) {
-                // Jika data di sessionStorage rusak, hapus dan tendang ke login
-                console.error("Gagal mem-parsing data user:", error);
+                console.error("Data sesi rusak:", error);
                 sessionStorage.removeItem('loggedInUser');
                 window.location.replace('login.html');
             }
         };
 
         function loadDashboardContent(roleId) {
-            // ... (fungsi ini tetap sama seperti sebelumnya)
+            dashboardContent.innerHTML = '<p>Memuat konten...</p>';
+            fetch(`${webAppUrl}?action=getDashboardContent&role_id=${roleId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        dashboardContent.innerHTML = data.htmlContent;
+                    } else {
+                        dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat konten: ${data.message}</p>`;
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    dashboardContent.innerHTML = `<p style="color: red;">Gagal terhubung ke server.</p>`;
+                });
         }
 
-        // Fungsi Logout
         logoutButton.addEventListener('click', (e) => {
             e.preventDefault();
             sessionStorage.removeItem('loggedInUser');
-            window.location.replace('login.html'); // Gunakan replace agar tidak bisa kembali dengan tombol "back"
+            window.location.replace('login.html');
         });
         
-        // ... (fungsi hamburger tetap sama seperti sebelumnya)
-
+        hamburgerButton.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 992 && !sidebar.contains(e.target) && !hamburgerButton.contains(e.target)) {
+                sidebar.classList.remove('show');
+            }
+        });
     </script>
 </body>
 </html>
-
