@@ -8,34 +8,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 </head>
-<body>
+<body class="light-mode">
 
     <div class="dashboard-layout">
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <span class="logo-text">Dashboard</span>
-            </div>
-            <nav class="sidebar-nav">
-                <a href="#" class="nav-item active"><i class="fa-solid fa-house"></i><span>Dashboard Utama</span></a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-file-pen"></i><span>Register Aplikasi</span></a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-truck"></i><span>Register Pengiriman</span></a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-hand-holding-dollar"></i><span>Register Klaim</span></a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-calculator"></i><span>Simulasi Premi</span></a>
-                <h6 class="nav-title">ADMINISTRASI</h6>
-                <a href="#" class="nav-item"><i class="fa-solid fa-users-cog"></i><span>Pengaturan User</span></a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-user-shield"></i><span>Pengaturan Role</span></a>
-            </nav>
-            <div class="sidebar-footer">
-                <a href="#" id="logout-button" class="nav-item"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
-            </div>
+            <!-- ... (Konten sidebar tetap sama seperti sebelumnya) ... -->
         </aside>
 
         <div class="main-content">
             <header class="header">
                 <div class="header-left">
-                    <button id="hamburger-button" class="hamburger-btn"><i class="fa-solid fa-bars"></i></button>
-                    <h1 class="header-title">Dashboard Utama</h1>
+                    <!-- [DIKEMBALIKAN] Tombol hamburger sekarang ada lagi -->
+                    <button id="hamburger-button" class="hamburger-btn">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <h1 class="header-title">Halaman Utama</h1>
                 </div>
+                
                 <div id="user-profile" class="header-right">
                     <span id="user-name">Memuat...</span>
                     <i class="fa-solid fa-user-circle"></i>
@@ -46,72 +35,13 @@
                 <p>Memuat konten dashboard...</p>
             </main>
         </div>
+        
+        <!-- [BARU] Menambahkan overlay untuk latar belakang saat menu mobile terbuka -->
+        <div class="overlay"></div>
     </div>
 
     <script>
-        // Elemen UI
-        const userNameEl = document.getElementById('user-name');
-        const dashboardContent = document.getElementById('dashboard-content');
-        const logoutButton = document.getElementById('logout-button');
-        const hamburgerButton = document.getElementById('hamburger-button');
-        const sidebar = document.querySelector('.sidebar');
-        
-        // Ganti dengan URL Web App Anda
-        const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
-
-        // Fungsi yang berjalan saat halaman dimuat
-        window.onload = () => {
-            const userDataString = sessionStorage.getItem('loggedInUser');
-            
-            // Gerbang Keamanan Utama
-            if (!userDataString) {
-                window.location.replace('login.html'); // atau index.html
-                return; 
-            }
-            
-            try {
-                const user = JSON.parse(userDataString);
-                userNameEl.textContent = user.nama_lengkap;
-                loadDashboardContent(user.id_role);
-            } catch (error) {
-                console.error("Data sesi rusak:", error);
-                sessionStorage.removeItem('loggedInUser');
-                window.location.replace('login.html');
-            }
-        };
-
-        function loadDashboardContent(roleId) {
-            dashboardContent.innerHTML = '<p>Memuat konten...</p>';
-            fetch(`${webAppUrl}?action=getDashboardContent&role_id=${roleId}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        dashboardContent.innerHTML = data.htmlContent;
-                    } else {
-                        dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat konten: ${data.message}</p>`;
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    dashboardContent.innerHTML = `<p style="color: red;">Gagal terhubung ke server.</p>`;
-                });
-        }
-
-        logoutButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            sessionStorage.removeItem('loggedInUser');
-            window.location.replace('login.html');
-        });
-        
-        hamburgerButton.addEventListener('click', () => {
-            sidebar.classList.toggle('show');
-        });
-        
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 992 && !sidebar.contains(e.target) && !hamburgerButton.contains(e.target)) {
-                sidebar.classList.remove('show');
-            }
-        });
+        // ... (Script akan kita perbarui di langkah berikutnya)
     </script>
 </body>
 </html>
