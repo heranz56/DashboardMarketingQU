@@ -8,13 +8,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 </head>
-<body class="light-mode">
+<!-- [BARU] Default ke dark-mode sesuai referensi Dribbble -->
+<body class="dark-mode"> 
 
-    <!-- [DIKEMBALIKAN] Struktur layout utama -->
     <div class="dashboard-layout">
-        <!-- ===== SIDEBAR (MENU KIRI) ===== -->
         <aside class="sidebar">
             <div class="sidebar-header">
+                <i class="fa-solid fa-chart-line"></i>
                 <span class="logo-text">Dashboard</span>
             </div>
             <nav class="sidebar-nav">
@@ -31,37 +31,52 @@
                 <div class="theme-switch-wrapper">
                     <label class="theme-switch" for="theme-checkbox">
                         <input type="checkbox" id="theme-checkbox" />
-                        <div class="slider round">
-                            <i class="fa-solid fa-sun sun-icon"></i><i class="fa-solid fa-moon moon-icon"></i>
-                        </div>
+                        <div class="slider round"></div>
                     </label>
-                    <span>Dark Mode</span>
                 </div>
                 <a href="#" id="logout-button" class="nav-item"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
             </div>
         </aside>
 
-        <!-- ===== KONTEN UTAMA (KANAN) ===== -->
         <div class="main-content">
             <header class="header">
                 <div class="header-left">
                     <button id="hamburger-button" class="hamburger-btn"><i class="fa-solid fa-bars"></i></button>
                     <h1 class="header-title">Halaman Utama</h1>
                 </div>
-                <div id="user-profile" class="header-right">
-                    <span id="user-name">Memuat...</span>
-                    <i class="fa-solid fa-user-circle"></i>
+                <div class="header-right">
+                    <div class="search-bar">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" placeholder="Cari...">
+                    </div>
+                    <div class="user-profile">
+                        <span id="user-name">Memuat...</span>
+                        <img src="https://i.imgur.com/L4y3gJ4.png" alt="Avatar" class="user-avatar">
+                    </div>
                 </div>
             </header>
 
-            <!-- Di sinilah konten dinamis akan ditampilkan -->
             <main id="dashboard-content" class="content-area">
-                <p>Memuat konten dashboard...</p>
+                <!-- Konten akan dimuat di sini, kita tambahkan contoh card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3>Selamat Datang!</h3>
+                    </div>
+                    <div class="card-body">
+                        <p>Konten dinamis berdasarkan role Anda akan dimuat di sini.</p>
+                    </div>
+                </div>
             </main>
         </div>
-        
         <div class="overlay"></div>
     </div>
+
+    <script>
+        // ... Script JavaScript tetap sama persis seperti sebelumnya ...
+        // (Tidak perlu diganti jika sudah menggunakan versi terakhir)
+    </script>
+</body>
+</html>
 
     <script>
         // Elemen UI
@@ -155,3 +170,4 @@
     </script>
 </body>
 </html>
+
