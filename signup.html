@@ -12,8 +12,27 @@
 <body>
    <div class="container">
         <!-- ... (konten visual-side dan form-side tetap sama) ... -->
-        <div class="visual-side"><div class="visual-content"><span class="logo-text">Dashboard Marketing</span><h2>Monitoring Marketing Menjadi Mudah</h2><p>Monitoring bisnis Marketing secara real-time dengan data yang akurat dan terpusat.</p></div></div>
-        <div class="form-side"><div class="form-content"><div class="form-header"><h2>Buat Akun Baru</h2><p>Isi data di bawah ini untuk mendaftar.</p></div><form name="signup-form" method="POST" target="hidden_iframe"><input type="hidden" name="action" value="signup"><div class="input-group"><label for="fullname">Nama Lengkap</label><input type="text" id="fullname" name="nama_lengkap" placeholder="Masukkan nama lengkap Anda" required></div><div class="input-group"><label for="email">Email (Wajib Gmail)</label><input type="email" id="email" name="email" placeholder="contoh: namaanda@gmail.com" required pattern=".+@gmail\.com"></div><div class="input-group"><label for="password">Password</label><input type="password" id="password" name="password" placeholder="Buat password yang kuat" required></div><div class="input-group"><label for="whatsapp">No. WhatsApp</label><input type="tel" id="whatsapp" name="no_whatsapp" placeholder="Contoh: 081234567890" required></div><button type="submit" class="btn btn-primary">DAFTAR</button><p class="approval-info">*Pendaftaran memerlukan persetujuan dari Manajer untuk diaktifkan.</p></form><div class="form-footer"><p>Sudah punya akun? <a href="index.html">Masuk di sini</a></p></div></div></div>
+        <div class="visual-side"><div class="visual-content">
+            <span class="logo-text">Dashboard Marketing</span>
+            <h2>Monitoring Marketing Menjadi Mudah</h2>
+            <p>Monitoring bisnis Marketing secara real-time dengan data yang akurat dan terpusat.</p>
+        </div></div>
+        <div class="form-side"><div class="form-content">
+            <div class="form-header"><h2>Buat Akun Baru</h2>
+                <p>Isi data di bawah ini untuk mendaftar.</p>
+            </div><form name="signup-form" method="POST" target="hidden_iframe">
+                <input type="hidden" name="action" value="signup">
+                <div class="input-group"><label for="fullname">Nama Lengkap</label>
+                    <input type="text" id="fullname" name="nama_lengkap" placeholder="Masukkan nama lengkap Anda" required></div>
+                <div class="input-group"><label for="email">
+                    Email (Wajib Gmail)</label><input type="email" id="email" name="email" placeholder="contoh: namaanda@gmail.com" required pattern=".+@gmail\.com"></div>
+                <div class="input-group"><label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Buat password yang kuat" required></div>
+                <div class="input-group"><label for="whatsapp">No. WhatsApp</label>
+                    <input type="tel" id="whatsapp" name="no_whatsapp" placeholder="Contoh: 081234567890" required></div>
+                <button type="submit" class="btn btn-primary">DAFTAR</button>
+                <p class="approval-info">*Pendaftaran memerlukan persetujuan dari Manajer untuk diaktifkan.</p></form>
+            <div class="form-footer"><p>Sudah punya akun? <a href="index.html">Masuk di sini</a></p></div></div></div>
    </div>
 
     <iframe name="hidden_iframe" style="display:none;"></iframe>
@@ -51,4 +70,5 @@
     </script>
 </body>
 </html>
+
 
