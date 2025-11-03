@@ -8,13 +8,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
 </head>
-<!-- [BARU] Default ke dark-mode sesuai referensi Dribbble -->
-<body class="dark-mode dashboard-page"> 
+<body class="light-mode dashboard-page">
 
     <div class="dashboard-layout">
         <aside class="sidebar">
             <div class="sidebar-header">
-                <i class="fa-solid fa-chart-line"></i>
                 <span class="logo-text">Dashboard</span>
             </div>
             <nav class="sidebar-nav">
@@ -31,8 +29,9 @@
                 <div class="theme-switch-wrapper">
                     <label class="theme-switch" for="theme-checkbox">
                         <input type="checkbox" id="theme-checkbox" />
-                        <div class="slider round"></div>
+                        <div class="slider round"><i class="fa-solid fa-sun sun-icon"></i><i class="fa-solid fa-moon moon-icon"></i></div>
                     </label>
+                    <span>Dark Mode</span>
                 </div>
                 <a href="#" id="logout-button" class="nav-item"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
             </div>
@@ -44,42 +43,21 @@
                     <button id="hamburger-button" class="hamburger-btn"><i class="fa-solid fa-bars"></i></button>
                     <h1 class="header-title">Halaman Utama</h1>
                 </div>
-                <div class="header-right">
-                    <div class="search-bar">
-                        <i class="fa-solid fa-search"></i>
-                        <input type="text" placeholder="Cari...">
-                    </div>
-                    <div class="user-profile">
-                        <span id="user-name">Memuat...</span>
-                        <img src="https://i.imgur.com/L4y3gJ4.png" alt="Avatar" class="user-avatar">
-                    </div>
+                <div id="user-profile" class="header-right">
+                    <span id="user-name">Memuat...</span>
+                    <i class="fa-solid fa-user-circle"></i>
                 </div>
             </header>
 
             <main id="dashboard-content" class="content-area">
-                <!-- Konten akan dimuat di sini, kita tambahkan contoh card -->
-                <div class="card">
-                    <div class="card-header">
-                        <h3>Selamat Datang!</h3>
-                    </div>
-                    <div class="card-body">
-                        <p>Konten dinamis berdasarkan role Anda akan dimuat di sini.</p>
-                    </div>
-                </div>
+                <p>Memuat konten dashboard...</p>
             </main>
         </div>
+        
         <div class="overlay"></div>
     </div>
 
     <script>
-        // ... Script JavaScript tetap sama persis seperti sebelumnya ...
-        // (Tidak perlu diganti jika sudah menggunakan versi terakhir)
-    </script>
-</body>
-</html>
-
-    <script>
-        // Elemen UI
         const userNameEl = document.getElementById('user-name');
         const dashboardContent = document.getElementById('dashboard-content');
         const logoutButton = document.getElementById('logout-button');
@@ -90,7 +68,6 @@
         
         const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
 
-        // Fungsi yang berjalan saat halaman dimuat
         window.onload = () => {
             const userDataString = sessionStorage.getItem('loggedInUser');
             if (!userDataString) {
@@ -102,7 +79,6 @@
                 userNameEl.textContent = user.nama_lengkap;
                 loadDashboardContent(user.id_role);
             } catch (error) {
-                console.error("Data sesi rusak:", error);
                 sessionStorage.removeItem('loggedInUser');
                 window.location.replace('index.html');
             }
@@ -125,7 +101,6 @@
                     }
                 })
                 .catch(err => {
-                    console.error(err);
                     dashboardContent.innerHTML = `<p style="color: red;">Gagal terhubung ke server.</p>`;
                 });
         }
@@ -170,6 +145,3 @@
     </script>
 </body>
 </html>
-
-
-
