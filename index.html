@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Manajemen Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="visual-side">
+            <div class="visual-content">
+                  <span class="logo-text">Dashboard Marketing</span>
+                <h2>Monitoring Marketing Menjadi Mudah</h2>
+                <p>Monitoring bisnis Marketing secara real-time dengan data yang akurat dan terpusat.</p>
+            </div>
+        </div>
+        <div class="form-side">
+            <div class="form-content">
+                <div class="form-header">
+                    <h2>Selamat Datang!</h2>
+                    <p>Silakan masuk untuk melanjutkan.</p>
+                </div>
+                <!-- PERUBAHAN: Menggunakan iframe, menghapus Javascript fetch -->
+                <form name="login-form" method="POST" target="hidden_iframe_login">
+                    <input type="hidden" name="action" value="login">
+                    <div class="input-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Masukkan alamat email Anda" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Masukkan password Anda" required>
+                    </div>
+                    <a href="forgot-password.html" class="forgot-password">Lupa Password?</a>
+                    <button type="submit" class="btn btn-primary">MASUK</button>
+                    <!-- Tombol lain tidak berubah -->
+                </form>
+                <div class="form-footer">
+                    <p>Belum punya akun? <a href="signup.html">Daftar Sekarang</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- iframe tersembunyi untuk login -->
+    <iframe name="hidden_iframe_login" style="display:none;"></iframe>
+    <script>
+        // Javascript sederhana untuk mengatur URL form
+        document.forms['login-form'].action = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
+        // Karena kita tidak bisa membaca respons dari iframe, kita tidak bisa menangani error atau sukses secara dinamis.
+        // Fungsionalitas lanjutan memerlukan hosting file HTML.
+    </script>
+</body>
+</html>
