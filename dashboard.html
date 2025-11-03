@@ -10,33 +10,56 @@
 </head>
 <body class="light-mode">
 
+    <!-- [DIKEMBALIKAN] Struktur layout utama -->
     <div class="dashboard-layout">
+        <!-- ===== SIDEBAR (MENU KIRI) ===== -->
         <aside class="sidebar">
-            <!-- ... (Konten sidebar tetap sama seperti sebelumnya) ... -->
+            <div class="sidebar-header">
+                <span class="logo-text">Dashboard</span>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active"><i class="fa-solid fa-house"></i><span>Halaman Utama</span></a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-file-pen"></i><span>Register Aplikasi</span></a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-truck"></i><span>Register Pengiriman</span></a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-hand-holding-dollar"></i><span>Register Klaim</span></a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-calculator"></i><span>Simulasi Premi</span></a>
+                <h6 class="nav-title">ADMINISTRASI</h6>
+                <a href="#" class="nav-item"><i class="fa-solid fa-users-cog"></i><span>Pengaturan User</span></a>
+                <a href="#" class="nav-item"><i class="fa-solid fa-user-shield"></i><span>Pengaturan Role</span></a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="theme-switch-wrapper">
+                    <label class="theme-switch" for="theme-checkbox">
+                        <input type="checkbox" id="theme-checkbox" />
+                        <div class="slider round">
+                            <i class="fa-solid fa-sun sun-icon"></i><i class="fa-solid fa-moon moon-icon"></i>
+                        </div>
+                    </label>
+                    <span>Dark Mode</span>
+                </div>
+                <a href="#" id="logout-button" class="nav-item"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
+            </div>
         </aside>
 
+        <!-- ===== KONTEN UTAMA (KANAN) ===== -->
         <div class="main-content">
             <header class="header">
                 <div class="header-left">
-                    <!-- [DIKEMBALIKAN] Tombol hamburger sekarang ada lagi -->
-                    <button id="hamburger-button" class="hamburger-btn">
-                        <i class="fa-solid fa-bars"></i>
-                    </button>
+                    <button id="hamburger-button" class="hamburger-btn"><i class="fa-solid fa-bars"></i></button>
                     <h1 class="header-title">Halaman Utama</h1>
                 </div>
-                
                 <div id="user-profile" class="header-right">
                     <span id="user-name">Memuat...</span>
                     <i class="fa-solid fa-user-circle"></i>
                 </div>
             </header>
 
+            <!-- Di sinilah konten dinamis akan ditampilkan -->
             <main id="dashboard-content" class="content-area">
                 <p>Memuat konten dashboard...</p>
             </main>
         </div>
         
-        <!-- [BARU] Menambahkan overlay untuk latar belakang saat menu mobile terbuka -->
         <div class="overlay"></div>
     </div>
 
@@ -46,59 +69,89 @@
         const dashboardContent = document.getElementById('dashboard-content');
         const logoutButton = document.getElementById('logout-button');
         const themeCheckbox = document.getElementById('theme-checkbox');
-        const hamburgerButton = document.getElementById('hamburger-button'); // [DIKEMBALIKAN]
-        const sidebar = document.querySelector('.sidebar');                 // [DIKEMBALIKAN]
-        const overlay = document.querySelector('.overlay');                 // [BARU]
-
+        const hamburgerButton = document.getElementById('hamburger-button');
+        const sidebar = document.querySelector('.sidebar');
+        const overlay = document.querySelector('.overlay');
+        
         const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
 
         // Fungsi yang berjalan saat halaman dimuat
         window.onload = () => {
-            // ... (Logika pemeriksaan sesi tetap sama) ...
+            const userDataString = sessionStorage.getItem('loggedInUser');
+            if (!userDataString) {
+                window.location.replace('login.html');
+                return; 
+            }
+            try {
+                const user = JSON.parse(userDataString);
+                userNameEl.textContent = user.nama_lengkap;
+                loadDashboardContent(user.id_role);
+            } catch (error) {
+                console.error("Data sesi rusak:", error);
+                sessionStorage.removeItem('loggedInUser');
+                window.location.replace('login.html');
+            }
+            const currentTheme = localStorage.getItem('theme');
+            if (currentTheme === 'dark') {
+                document.body.classList.replace('light-mode', 'dark-mode');
+                themeCheckbox.checked = true;
+            }
         };
 
         function loadDashboardContent(roleId) {
-            // ... (Fungsi ini tetap sama) ...
+            dashboardContent.innerHTML = '<p>Memuat konten...</p>';
+            fetch(`${webAppUrl}?action=getDashboardContent&role_id=${roleId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        dashboardContent.innerHTML = data.htmlContent;
+                    } else {
+                        dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat konten: ${data.message}</p>`;
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    dashboardContent.innerHTML = `<p style="color: red;">Gagal terhubung ke server.</p>`;
+                });
         }
 
-        // Fungsi Logout
         logoutButton.addEventListener('click', (e) => {
-            // ... (Fungsi ini tetap sama) ...
+            e.preventDefault();
+            sessionStorage.removeItem('loggedInUser');
+            window.location.replace('login.html');
         });
         
-        // Fungsi untuk Toggle Dark/Light Mode
         themeCheckbox.addEventListener('change', function() {
-            // ... (Fungsi ini tetap sama) ...
+            if(this.checked) {
+                document.body.classList.replace('light-mode', 'dark-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.body.classList.replace('dark-mode', 'light-mode');
+                localStorage.setItem('theme', 'light');
+            }
         });
 
-        // [DIKEMBALIKAN & DISEMPURNAKAN] Fungsi untuk tombol Hamburger
         hamburgerButton.addEventListener('click', () => {
             sidebar.classList.add('show');
             overlay.classList.add('show');
         });
 
-        // Fungsi untuk menutup sidebar
         function closeSidebar() {
             sidebar.classList.remove('show');
             overlay.classList.remove('show');
         }
 
-        // Tutup sidebar saat overlay diklik
         overlay.addEventListener('click', closeSidebar);
         
-        // Tutup sidebar saat salah satu menu item diklik (opsional, tapi bagus)
         document.querySelectorAll('.sidebar .nav-item').forEach(item => {
             item.addEventListener('click', (e) => {
-                if (window.innerWidth <= 992) { // Hanya berlaku di mobile
-                    // Jika bukan tombol logout atau switch tema
-                    if (!e.currentTarget.id || (e.currentTarget.id !== 'logout-button' && e.currentTarget.id !== 'theme-switch-wrapper')) {
+                if (window.innerWidth <= 992) {
+                    if (e.currentTarget.id !== 'logout-button' && !e.currentTarget.closest('.theme-switch-wrapper')) {
                         closeSidebar();
                     }
                 }
             });
         });
-
     </script>
 </body>
 </html>
-
