@@ -3,56 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Memproses Persetujuan...</title>
+    <title>Persetujuan Pendaftaran</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="dashboard-container">
-        <h1 id="title">⏳ Memproses Permintaan Anda...</h1>
-        <p id="message">Mohon tunggu sebentar.</p>
+    <div id="main-container" class="dashboard-container" style="max-width: 600px;">
+        <h1 id="title">Tinjau Pendaftaran Pengguna</h1>
+        
+        <!-- Bagian ini akan diisi oleh JavaScript -->
+        <div id="user-details" style="text-align: left; margin-bottom: 30px; display: none;">
+            <h3>Detail Pengguna:</h3>
+            <p><strong>Nama:</strong> <span id="user-name"></span></p>
+            <p><strong>Email:</strong> <span id="user-email"></span></p>
+            <p><strong>No. WhatsApp:</strong> <span id="user-whatsapp"></span></p>
+        </div>
+
+        <!-- Form untuk pemilihan role -->
+        <div id="approval-form" style="text-align: left; display: none;">
+            <div class="input-group">
+                <label for="role-select"><strong>Tetapkan Role untuk Pengguna Ini:</strong></label>
+                <select id="role-select" name="role_id" style="width: 100%; padding: 10px; font-size: 16px;"></select>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button id="approve-button" class="btn btn-primary" style="flex: 1;">Konfirmasi Persetujuan</button>
+                <button id="reject-button" class="btn btn-danger" style="flex: 1;">Tolak Pendaftaran</button>
+            </div>
+        </div>
+
+        <p id="message" style="margin-top: 20px; font-size: 18px;"></p>
     </div>
 
     <script>
         const titleEl = document.getElementById('title');
         const messageEl = document.getElementById('message');
+        const userDetailsEl = document.getElementById('user-details');
+        const approvalFormEl = document.getElementById('approval-form');
+        const roleSelectEl = document.getElementById('role-select');
+        const approveButton = document.getElementById('approve-button');
+        const rejectButton = document.getElementById('reject-button');
 
-        // Fungsi ini akan berjalan saat halaman dimuat
+        // GANTI DENGAN URL WEB APP ANDA
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
+
+        // Fungsi yang berjalan saat halaman dimuat
         window.onload = () => {
             const params = new URLSearchParams(window.location.search);
             const token = params.get('token');
-            const action = params.get('action');
-            
-            // GANTI DENGAN URL WEB APP ANDA
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
 
-            if (!token || !action) {
-                titleEl.textContent = '❌ Error: Link Tidak Lengkap';
-                messageEl.textContent = 'Parameter token atau action tidak ditemukan di URL.';
+            if (!token) {
+                showFinalMessage('❌ Error: Link Tidak Valid', 'Parameter token tidak ditemukan di URL.');
                 return;
             }
 
-            // Buat URL lengkap untuk dikirim ke backend
-            const requestUrl = `${webAppUrl}?token=${token}&action=${action}`;
-
-            // Kirim permintaan ke Google Apps Script
-            fetch(requestUrl)
-                .then(response => response.json())
+            // Langkah 1: Ambil detail pengguna dan daftar role dari backend
+            fetch(`${webAppUrl}?action=getApprovalDetails&token=${token}`)
+                .then(res => res.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        titleEl.textContent = data.title;
-                        messageEl.innerHTML = data.message; // Gunakan innerHTML untuk merender tag <strong>
+                        // Tampilkan detail pengguna
+                        document.getElementById('user-name').textContent = data.user.nama_lengkap;
+                        document.getElementById('user-email').textContent = data.user.email;
+                        document.getElementById('user-whatsapp').textContent = data.user.No_WhatsApp;
+                        userDetailsEl.style.display = 'block';
+
+                        // Isi dropdown dengan daftar role
+                        data.roles.forEach(role => {
+                            const option = document.createElement('option');
+                            option.value = role.id_role;
+                            option.textContent = `${role.nama_role} - ${role.deskripsi}`;
+                            roleSelectEl.appendChild(option);
+                        });
+                        approvalFormEl.style.display = 'block';
+
+                        // Tambahkan event listener untuk tombol
+                        approveButton.onclick = () => processApproval('approve', token, roleSelectEl.value);
+                        rejectButton.onclick = () => processApproval('reject', token);
+
                     } else {
-                        titleEl.textContent = '❌ Terjadi Kesalahan';
-                        messageEl.textContent = data.message || 'Respons dari server tidak valid.';
+                        showFinalMessage(data.title || '❌ Gagal Mengambil Data', data.message);
                     }
                 })
-                .catch(error => {
-                    console.error('Error:', error);
-                    titleEl.textContent = '❌ Gagal Terhubung ke Server';
-                    messageEl.textContent = 'Tidak dapat memproses permintaan. Silakan periksa koneksi Anda dan coba lagi.';
+                .catch(err => {
+                    console.error(err);
+                    showFinalMessage('❌ Gagal Terhubung', 'Tidak dapat mengambil detail pendaftaran. Periksa koneksi Anda.');
                 });
         };
+
+        // Langkah 2: Proses persetujuan/penolakan
+        function processApproval(action, token, roleId = null) {
+            approveButton.disabled = true;
+            rejectButton.disabled = true;
+            messageEl.textContent = 'Memproses...';
+
+            let requestUrl = `${webAppUrl}?action=${action}&token=${token}`;
+            if (action === 'approve' && roleId) {
+                requestUrl += `&role_id=${roleId}`;
+            }
+
+            fetch(requestUrl)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        showFinalMessage(data.title, data.message);
+                    } else {
+                        showFinalMessage(data.title || '❌ Gagal Memproses', data.message);
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    showFinalMessage('❌ Gagal Terhubung', 'Tidak dapat memproses permintaan Anda.');
+                });
+        }
+
+        // Fungsi untuk menampilkan pesan akhir dan menyembunyikan form
+        function showFinalMessage(title, message) {
+            titleEl.textContent = title;
+            messageEl.innerHTML = message;
+            userDetailsEl.style.display = 'none';
+            approvalFormEl.style.display = 'none';
+        }
     </script>
 </body>
 </html>
