@@ -81,7 +81,59 @@
     </div>
 
     <script>
-        // ... (Script untuk memuat konten dan logout akan ditambahkan di langkah berikutnya)
+        // Elemen-elemen UI
+        const userNameEl = document.getElementById('user-name');
+        const dashboardContent = document.getElementById('dashboard-content');
+        const logoutButton = document.getElementById('logout-button');
+        const hamburgerButton = document.getElementById('hamburger-button');
+        const sidebar = document.querySelector('.sidebar');
+        
+        // GANTI DENGAN URL WEB APP ANDA
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
+
+        // Fungsi yang berjalan saat halaman dimuat
+        window.onload = () => {
+            const userDataString = sessionStorage.getItem('loggedInUser');
+            
+            // Periksa Sesi Keamanan
+            if (!userDataString) {
+                // Jika tidak ada data user, langsung tendang kembali ke login.
+                // Penting: Gunakan 'index.html' jika itu adalah halaman login utama Anda.
+                window.location.replace('login.html'); 
+                return; // Hentikan eksekusi script lebih lanjut
+            }
+            
+            try {
+                const user = JSON.parse(userDataString);
+
+                // Sapa Pengguna di Header
+                userNameEl.textContent = user.nama_lengkap;
+
+                // Minta Konten Dashboard Sesuai Role
+                loadDashboardContent(user.id_role);
+
+            } catch (error) {
+                // Jika data di sessionStorage rusak, hapus dan tendang ke login
+                console.error("Gagal mem-parsing data user:", error);
+                sessionStorage.removeItem('loggedInUser');
+                window.location.replace('login.html');
+            }
+        };
+
+        function loadDashboardContent(roleId) {
+            // ... (fungsi ini tetap sama seperti sebelumnya)
+        }
+
+        // Fungsi Logout
+        logoutButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            sessionStorage.removeItem('loggedInUser');
+            window.location.replace('login.html'); // Gunakan replace agar tidak bisa kembali dengan tombol "back"
+        });
+        
+        // ... (fungsi hamburger tetap sama seperti sebelumnya)
+
     </script>
 </body>
 </html>
+
