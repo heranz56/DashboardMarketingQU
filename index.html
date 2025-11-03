@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF--8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Manajemen Dashboard</title>
     <link rel="stylesheet" href="style.css">
@@ -12,22 +12,17 @@
     <div class="container">
         <div class="visual-side">
             <div class="visual-content">
-                <div class="logo-container">
-                    <img src="https://i.imgur.com/L4y3gJ4.png" alt="Company Logo" class="illustration">
-                    <span class="logo-text">Dashboard<br>Marketing</span>
-                 </div>
+                  <span class="logo-text">Dashboard Marketing</span>
                 <h2>Monitoring Marketing Menjadi Mudah</h2>
                 <p>Monitoring bisnis Marketing secara real-time dengan data yang akurat dan terpusat.</p>
             </div>
         </div>
-
         <div class="form-side">
             <div class="form-content">
                 <div class="form-header">
                     <h2>Selamat Datang!</h2>
                     <p>Silakan masuk untuk melanjutkan.</p>
                 </div>
-                
                 <form name="login-form">
                     <input type="hidden" name="action" value="login">
                     <div class="input-group">
@@ -38,47 +33,60 @@
                         <label for="password">Password</label>
                         <input type="password" id="password" name="password" placeholder="Masukkan password Anda" required>
                     </div>
-                    
                     <a href="forgot-password.html" class="forgot-password">Lupa Password?</a>
-                    
                     <button type="submit" class="btn btn-primary">MASUK</button>
-                    
-                    <div class="divider">
-                        <span>atau</span>
-                    </div>
-                    
-                    <button type="button" class="btn btn-secondary">
-                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo">
-                        Masuk dengan Google
-                    </button>
+                    <p id="error-message" style="color: red; text-align: center; margin-top: 15px; height: 20px;"></p>
+                    <div class="divider"><span>atau</span></div>
+                    <button type="button" class="btn btn-secondary"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo"> Masuk dengan Google</button>
                 </form>
-                
                 <div class="form-footer">
                     <p>Belum punya akun? <a href="signup.html">Daftar Sekarang</a></p>
                 </div>
             </div>
         </div>
     </div>
-
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
         const form = document.forms['login-form'];
         const loginButton = document.querySelector('button[type="submit"]');
+        const errorMessage = document.getElementById('error-message');
+
+        // [BARU] Periksa jika pengguna sudah login, langsung arahkan ke dashboard
+        window.onload = () => {
+            if (sessionStorage.getItem('loggedInUser')) {
+                window.location.replace('dashboard.html');
+            }
+        };
 
         form.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            // PASTIKAN URL INI ADALAH URL DEPLOYMENT ANDA YANG BENAR
+            e.preventDefault(); // Mencegah reload halaman
             const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
             
             loginButton.disabled = true;
             loginButton.textContent = 'MEMPROSES...';
+            errorMessage.textContent = ''; 
 
             const formData = new FormData(form);
 
-            fetch(webAppUrl, {
-                method: 'POST',
-                body: formData
-            })
+            fetch(webAppUrl, { method: 'POST', body: formData })
             .then(response => response.json())
-            .t
+            .then(data => {
+                if (data.status === 'success' && data.user) {
+                    sessionStorage.setItem('loggedInUser', JSON.stringify(data.user));
+                    window.location.replace('dashboard.html');
+                } else {
+                    errorMessage.textContent = data.message;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                errorMessage.textContent = 'Terjadi masalah koneksi.';
+            })
+            .finally(() => {
+                loginButton.disabled = false;
+                loginButton.textContent = 'MASUK';
+            });
+        });
+    </script>
+</body>
+</html>
