@@ -35,7 +35,7 @@
             const userDataString = sessionStorage.getItem('loggedInUser');
             if (!userDataString) {
                 // Jika tidak ada data user, tendang kembali ke login
-                window.location.href = 'login.html'; // atau index.html
+                window.location.href = 'index.html'; // atau index.html
                 return;
             }
             
@@ -65,8 +65,9 @@
             // Hapus data sesi dari browser
             sessionStorage.removeItem('loggedInUser');
             // Arahkan pengguna kembali ke halaman login
-            window.location.href = 'login.html'; // atau index.html
+            window.location.href = 'index.html'; // atau index.html
         });
     </script>
 </body>
 </html>
+
