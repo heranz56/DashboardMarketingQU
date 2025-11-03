@@ -1,92 +1,84 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF--8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Manajemen Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- [BARU] Menambahkan CSS untuk Toast -->
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <body>
     <div class="container">
-        <!-- ... (konten visual-side dan form-side tetap sama) ... -->
-        <div class="visual-side"><div class="visual-content"><span class="logo-text">Dashboard Marketing</span><h2>Monitoring Marketing Menjadi Mudah</h2><p>Monitoring bisnis Marketing secara real-time dengan data yang akurat dan terpusat.</p></div></div>
-        <div class="form-side"><div class="form-content"><div class="form-header"><h2>Selamat Datang!</h2><p>Silakan masuk untuk melanjutkan.</p></div><form name="login-form"><input type="hidden" name="action" value="login"><div class="input-group"><label for="email">Email</label><input type="email" id="email" name="email" placeholder="Masukkan alamat email Anda" required></div><div class="input-group"><label for="password">Password</label><input type="password" id="password" name="password" placeholder="Masukkan password Anda" required></div><a href="forgot-password.html" class="forgot-password">Lupa Password?</a><button type="submit" class="btn btn-primary">MASUK</button><p id="error-message" style="color: red; text-align: center; margin-top: 15px; height: 20px;"></p><div class="divider"><span>atau</span></div><button type="button" class="btn btn-secondary"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo"> Masuk dengan Google</button></form><div class="form-footer"><p>Belum punya akun? <a href="signup.html">Daftar Sekarang</a></p></div></div></div>
+        <div class="visual-side">
+            <div class="visual-content">
+                <div class="logo-container">
+                    <img src="https://i.imgur.com/L4y3gJ4.png" alt="Company Logo" class="illustration">
+                    <span class="logo-text">Dashboard<br>Marketing</span>
+                 </div>
+                <h2>Monitoring Marketing Menjadi Mudah</h2>
+                <p>Monitoring bisnis Marketing secara real-time dengan data yang akurat dan terpusat.</p>
+            </div>
+        </div>
+
+        <div class="form-side">
+            <div class="form-content">
+                <div class="form-header">
+                    <h2>Selamat Datang!</h2>
+                    <p>Silakan masuk untuk melanjutkan.</p>
+                </div>
+                
+                <form name="login-form">
+                    <input type="hidden" name="action" value="login">
+                    <div class="input-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Masukkan alamat email Anda" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Masukkan password Anda" required>
+                    </div>
+                    
+                    <a href="forgot-password.html" class="forgot-password">Lupa Password?</a>
+                    
+                    <button type="submit" class="btn btn-primary">MASUK</button>
+                    
+                    <div class="divider">
+                        <span>atau</span>
+                    </div>
+                    
+                    <button type="button" class="btn btn-secondary">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo">
+                        Masuk dengan Google
+                    </button>
+                </form>
+                
+                <div class="form-footer">
+                    <p>Belum punya akun? <a href="signup.html">Daftar Sekarang</a></p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- [BARU] Menambahkan JavaScript untuk Toast -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-
     <script>
-        // Elemen-elemen UI
-        const userNameEl = document.getElementById('user-name');
-        const dashboardContent = document.getElementById('dashboard-content');
-        const logoutButton = document.getElementById('logout-button');
-        const hamburgerButton = document.getElementById('hamburger-button');
-        const sidebar = document.querySelector('.sidebar');
-        
-        // GANTI DENGAN URL WEB APP ANDA
-        const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
+        const form = document.forms['login-form'];
+        const loginButton = document.querySelector('button[type="submit"]');
 
-        // Fungsi yang berjalan saat halaman dimuat
-        window.onload = () => {
-            // 1. Periksa Sesi Keamanan
-            const userDataString = sessionStorage.getItem('loggedInUser');
-            if (!userDataString) {
-                window.location.href = 'index.html'; // atau index.html
-                return;
-            }
-            
-            const user = JSON.parse(userDataString);
-
-            // 2. Sapa Pengguna di Header
-            userNameEl.textContent = user.nama_lengkap;
-
-            // 3. Minta Konten Dashboard Sesuai Role
-            loadDashboardContent(user.id_role);
-        };
-
-        function loadDashboardContent(roleId) {
-            dashboardContent.innerHTML = '<p>Memuat konten...</p>';
-            fetch(`${webAppUrl}?action=getDashboardContent&role_id=${roleId}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        dashboardContent.innerHTML = data.htmlContent;
-                    } else {
-                        dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat konten: ${data.message}</p>`;
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    dashboardContent.innerHTML = `<p style="color: red;">Gagal terhubung ke server.</p>`;
-                });
-        }
-
-        // Fungsi Logout
-        logoutButton.addEventListener('click', (e) => {
+        form.addEventListener('submit', function(e) {
             e.preventDefault();
-            sessionStorage.removeItem('loggedInUser');
-            window.location.href = 'index.html'; // atau index.html
-        });
-        
-        // Fungsi untuk tombol Hamburger
-        hamburgerButton.addEventListener('click', () => {
-            sidebar.classList.toggle('show');
-        });
-        
-        // Opsional: Tutup sidebar saat diklik di luar area sidebar (di mobile)
-        document.addEventListener('click', (e) => {
-            if (window.innerWidth <= 992 && !sidebar.contains(e.target) && !hamburgerButton.contains(e.target)) {
-                sidebar.classList.remove('show');
-            }
-        });
 
-    </script>
-</body>
-</html>
+            // PASTIKAN URL INI ADALAH URL DEPLOYMENT ANDA YANG BENAR
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
+            
+            loginButton.disabled = true;
+            loginButton.textContent = 'MEMPROSES...';
 
+            const formData = new FormData(form);
 
-
+            fetch(webAppUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .t
