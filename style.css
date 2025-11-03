@@ -106,35 +106,160 @@ body {
 
 /* === PENAMBAHAN BARU UNTUK HALAMAN DASHBOARD === */
 
-.dashboard-container {
-    width: 100%;
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 40px;
-    background-color: #FFFFFF;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    border-radius: 20px;
+.dashboard-layout {
+    display: flex;
+}
+
+.sidebar {
+    width: var(--sidebar-width);
+    height: 100vh;
+    background-color: var(--surface-color);
+    border-right: 1px solid var(--border-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease-in-out;
+}
+
+.main-content {
+    flex: 1;
+    margin-left: var(--sidebar-width);
+    display: flex;
+    flex-direction: column;
+}
+
+/* =================================================================
+   KOMPONEN SIDEBAR
+   ================================================================= */
+.sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 15px 0;
+    overflow-y: auto;
+}
+
+.nav-title {
+    padding: 10px 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-color-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 15px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    margin: 5px 10px;
+    border-radius: 8px;
+    font-weight: 500;
+    color: var(--text-color-secondary);
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.nav-item i {
+    width: 20px;
+    margin-right: 15px;
     text-align: center;
 }
 
-.dashboard-container h1 {
-    font-size: 36px;
-    color: var(--text-color);
+.nav-item:hover {
+    background-color: #F3F4F6; /* Sedikit lebih gelap dari background utama */
+    color: var(--text-color-primary);
 }
 
-.dashboard-container p {
-    font-size: 18px;
-    color: var(--subtle-text-color);
-    margin-bottom: 40px;
-}
-
-.btn-danger {
-    background-color: #DC3545; /* Warna merah untuk aksi berbahaya seperti logout */
+.nav-item.active {
+    background-color: var(--primary-color);
     color: white;
-    max-width: 200px;
-    margin: 0 auto; /* Tombol di tengah */
 }
 
-.btn-danger:hover {
-    background-color: #C82333;
+.sidebar-footer {
+    padding: 15px 0;
+    border-top: 1px solid var(--border-color);
+}
+
+/* =================================================================
+   KOMPONEN HEADER
+   ================================================================= */
+.header {
+    height: var(--header-height);
+    background-color: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 25px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+}
+
+.hamburger-btn {
+    display: none; /* Sembunyikan di desktop */
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 15px;
+    color: var(--text-color-secondary);
+}
+
+.header-title {
+    font-size: 22px;
+    font-weight: 600;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.header-right i {
+    font-size: 24px;
+    color: var(--text-color-secondary);
+}
+
+/* =================================================================
+   AREA KONTEN
+   ================================================================= */
+.content-area {
+    padding: 25px;
+    flex: 1;
+}
+
+/* =================================================================
+   DESAIN RESPONSIVE (UNTUK MOBILE)
+   ================================================================= */
+@media (max-width: 992px) {
+    .sidebar {
+        transform: translateX(-100%); /* Sembunyikan sidebar ke kiri */
+        z-index: 1000;
+    }
+
+    .sidebar.show {
+        transform: translateX(0); /* Tampilkan sidebar */
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .hamburger-btn {
+        display: block; /* Tampilkan tombol hamburger */
+    }
 }
