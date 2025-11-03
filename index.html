@@ -1,94 +1,195 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <link rel="icon" type="image/png" href="favicon.png">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Manajemen Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-</head>
-<body>
-    <div class="container">
-        <div class="visual-side">
-            <div class="visual-content">
-                  <span class="logo-text">Dashboard Marketing</span>
-                <h2>Monitoring Marketing Menjadi Mudah</h2>
-                <p>Monitoring bisnis Marketing secara real-time dengan data yang akurat dan terpusat.</p>
-            </div>
-        </div>
-        <div class="form-side">
-            <div class="form-content">
-                <div class="form-header">
-                    <h2>Selamat Datang!</h2>
-                    <p>Silakan masuk untuk melanjutkan.</p>
-                </div>
-                <form name="login-form">
-                    <input type="hidden" name="action" value="login">
-                    <div class="input-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" placeholder="Masukkan alamat email Anda" required>
-                    </div>
-                    <div class="input-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Masukkan password Anda" required>
-                    </div>
-                    <a href="forgot-password.html" class="forgot-password">Lupa Password?</a>
-                    <button type="submit" class="btn btn-primary">MASUK</button>
-                    <p id="error-message" style="color: red; text-align: center; margin-top: 15px; height: 20px;"></p>
-                    <div class="divider"><span>atau</span></div>
-                    <button type="button" class="btn btn-secondary"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo"> Masuk dengan Google</button>
-                </form>
-                <div class="form-footer">
-                    <p>Belum punya akun? <a href="signup.html">Daftar Sekarang</a></p>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <script>
-        const form = document.forms['login-form'];
-        const loginButton = document.querySelector('button[type="submit"]');
-        const errorMessage = document.getElementById('error-message');
+/* =================================================================
+   BAGIAN 1: GAYA UNTUK FORM (LOGIN, SIGNUP, DLL.)
+   ================================================================= */
 
-        // [BARU] Periksa jika pengguna sudah login, langsung arahkan ke dashboard
-        window.onload = () => {
-            if (sessionStorage.getItem('loggedInUser')) {
-                window.location.replace('dashboard.html');
-            }
-        };
+/* Konfigurasi Warna Dasar */
+:root {
+    --primary-color: #4F46E5;
+    --text-color: #1F2937;
+    --subtle-text-color: #6B7280;
+    --background-color: #FFFFFF;
+    --border-color: #D1D5DB;
+}
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault(); // Mencegah reload halaman
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
-            
-            loginButton.disabled = true;
-            loginButton.textContent = 'MEMPROSES...';
-            errorMessage.textContent = ''; 
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
 
-            const formData = new FormData(form);
+/* Kontainer Utama untuk Halaman Form */
+.container {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    min-height: 90vh;
+    margin: 20px;
+    background-color: var(--background-color);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+}
 
-            fetch(webAppUrl, { method: 'POST', body: formData })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success' && data.user) {
-                    sessionStorage.setItem('loggedInUser', JSON.stringify(data.user));
-                    window.location.replace('dashboard.html');
-                } else {
-                    errorMessage.textContent = data.message;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                errorMessage.textContent = 'Terjadi masalah koneksi.';
-            })
-            .finally(() => {
-                loginButton.disabled = false;
-                loginButton.textContent = 'MASUK';
-            });
-        });
-    </script>
-</body>
-</html>
+/* Sisi Kiri (Visual) untuk Form */
+.container .visual-side {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    text-align: center;
+    position: relative;
+    background-image: url('https://images.pexels.com/photos/830891/pexels-photo-830891.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1');
+    background-size: cover;
+    background-position: center;
+}
 
+.container .visual-side::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba(17, 24, 39, 0.6);
+    z-index: 1;
+}
+
+.container .visual-content {
+    position: relative;
+    z-index: 2;
+    color: #E5E7EB;
+}
+
+.container .logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.container .visual-content .illustration {
+    max-width: 50px;
+    height: auto;
+    margin: 0;
+}
+
+.container .logo-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: #E5E7EB;
+    text-align: left;
+    line-height: 1.2;
+}
+
+.container .visual-content h2 {
+    font-size: 48px;
+    color: #FFFFFF;
+    margin-bottom: 15px;
+    line-height: 1.2;
+}
+
+.container .visual-content p {
+    font-size: 18px;
+    color: #E5E7EB;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* Sisi Kanan (Form) */
+.container .form-side {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+}
+
+.container .form-content {
+    width: 100%;
+    max-width: 400px;
+}
+
+/* Elemen-elemen Form */
+.form-header { margin-bottom: 30px; text-align: center; }
+.form-header h2 { font-size: 32px; margin-bottom: 10px; }
+.form-header p { color: var(--subtle-text-color); }
+.input-group { margin-bottom: 20px; }
+.input-group label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 14px; }
+.input-group input {
+    width: 100%; padding: 12px 15px; border: 1px solid var(--border-color);
+    border-radius: 8px; font-size: 16px; box-sizing: border-box;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+.input-group input:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); }
+.forgot-password { display: block; text-align: right; margin-bottom: 25px; font-size: 14px; color: var(--primary-color); text-decoration: none; font-weight: 600; }
+.btn { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; transition: background-color 0.3s, box-shadow 0.3s; }
+.btn-primary { background-color: var(--primary-color); color: white; }
+.btn-primary:hover { background-color: #4338CA; }
+.btn-secondary { background-color: #FFFFFF; color: var(--text-color); border: 1px solid var(--border-color); display: flex; justify-content: center; align-items: center; gap: 10px; }
+.btn-secondary img { width: 20px; }
+.divider { display: flex; align-items: center; text-align: center; margin: 30px 0; color: var(--subtle-text-color); }
+.divider::before, .divider::after { content: ''; flex: 1; border-bottom: 1px solid var(--border-color); }
+.divider span { padding: 0 15px; }
+.form-footer p, .approval-info { color: var(--subtle-text-color); font-size: 14px; }
+.form-footer a { color: var(--primary-color); font-weight: 600; text-decoration: none; }
+.approval-info { text-align: center; margin-top: 15px; font-style: italic; }
+
+/* Responsive untuk Halaman Form */
+@media (max-width: 992px) {
+    body:not(.dashboard-page) .container {
+        flex-direction: column; min-height: 100vh; border-radius: 0; margin: 0;
+    }
+    body:not(.dashboard-page) .visual-side { display: none; }
+    body:not(.dashboard-page) .form-side { width: 100%; padding: 20px; }
+}
+
+
+/* =================================================================
+   BAGIAN 2: GAYA KHUSUS UNTUK DASHBOARD
+   ================================================================= */
+
+/* Konfigurasi Warna Dashboard */
+:root {
+    --d-bg-light: #F7F8FC; --d-surface-light: #FFFFFF; --d-border-light: #EAEBF3;
+    --d-text-primary-light: #121629; --d-text-secondary-light: #6E7693;
+    --d-bg-dark: #121629; --d-surface-dark: #1A1F36; --d-border-dark: #29304E;
+    --d-text-primary-dark: #FFFFFF; --d-text-secondary-dark: #8C94B2;
+}
+
+body.dashboard-page.light-mode {
+    --bg: var(--d-bg-light); --surface: var(--d-surface-light); --border: var(--d-border-light);
+    --text-primary: var(--d-text-primary-light); --text-secondary: var(--d-text-secondary-light);
+}
+body.dashboard-page.dark-mode {
+    --bg: var(--d-bg-dark); --surface: var(--d-surface-dark); --border: var(--d-border-dark);
+    --text-primary: var(--d-text-primary-dark); --text-secondary: var(--d-text-secondary-dark);
+}
+body.dashboard-page { background-color: var(--bg); color: var(--text-primary); }
+
+/* Struktur Utama Dashboard */
+.dashboard-layout { display: flex; position: relative; }
+.sidebar {
+    width: 260px; height: 100vh; background-color: var(--surface); border-right: 1px solid var(--border);
+    position: fixed; top: 0; left: 0; display: flex; flex-direction: column;
+    transition: 0.3s; z-index: 1000;
+}
+.main-content { flex: 1; margin-left: 260px; display: flex; flex-direction: column; }
+
+/* Komponen Sidebar Dashboard */
+.sidebar-header {
+    display: flex; align-items: center; gap: 15px; padding: 25px;
+    border-bottom: 1px solid var(--border); font-size: 24px; font-weight: 600;
+}
+.sidebar-header i { color: var(--primary-color); }
+.sidebar-nav { flex: 1; padding: 15px; }
+.nav-title { padding: 10px 15px; font-size: 12px; font-weight: 500; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px; }
+.nav-item {
+    display: flex; align-items: center; padding: 12px 15px; margin-bottom: 5px;
+    border-radius: 8px; font-weight: 500; color: var(--text-secondary); transition: 0.2s;
+}
+.nav-item i { width: 20px; margin-right: 15px; text-align: center; }
+.nav-item:hover { color: var(--text-primary); }
+.nav-item.active { background-color: var(--primary-color); color: white; box-shadow: 0 4px 12px rgba(74, 105, 255, 0.3); }
+.sidebar-footer { padding: 15px; border-top: 1px solid var(--border); }
+.theme-switch-wrapper { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; border-radius: 8px; cursor: pointer; color: var(--text-secondary); }
+.theme-switch { position:
