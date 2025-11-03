@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memproses Persetujuan...</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <h1 id="title">⏳ Memproses Permintaan Anda...</h1>
+        <p id="message">Mohon tunggu sebentar.</p>
+    </div>
+
+    <script>
+        const titleEl = document.getElementById('title');
+        const messageEl = document.getElementById('message');
+
+        // Fungsi ini akan berjalan saat halaman dimuat
+        window.onload = () => {
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('token');
+            const action = params.get('action');
+            
+            // GANTI DENGAN URL WEB APP ANDA
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
+
+            if (!token || !action) {
+                titleEl.textContent = '❌ Error: Link Tidak Lengkap';
+                messageEl.textContent = 'Parameter token atau action tidak ditemukan di URL.';
+                return;
+            }
+
+            // Buat URL lengkap untuk dikirim ke backend
+            const requestUrl = `${webAppUrl}?token=${token}&action=${action}`;
+
+            // Kirim permintaan ke Google Apps Script
+            fetch(requestUrl)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        titleEl.textContent = data.title;
+                        messageEl.innerHTML = data.message; // Gunakan innerHTML untuk merender tag <strong>
+                    } else {
+                        titleEl.textContent = '❌ Terjadi Kesalahan';
+                        messageEl.textContent = data.message || 'Respons dari server tidak valid.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    titleEl.textContent = '❌ Gagal Terhubung ke Server';
+                    messageEl.textContent = 'Tidak dapat memproses permintaan. Silakan periksa koneksi Anda dan coba lagi.';
+                });
+        };
+    </script>
+</body>
+</html>
