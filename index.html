@@ -20,57 +20,72 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <script>
-        const form = document.forms['login-form'];
-        const loginButton = document.querySelector('button[type="submit"]');
-        const errorMessage = document.getElementById('error-message');
+        // Elemen-elemen UI
+        const userNameEl = document.getElementById('user-name');
+        const dashboardContent = document.getElementById('dashboard-content');
+        const logoutButton = document.getElementById('logout-button');
+        const hamburgerButton = document.getElementById('hamburger-button');
+        const sidebar = document.querySelector('.sidebar');
         
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
+        // GANTI DENGAN URL WEB APP ANDA
+        const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
+
+        // Fungsi yang berjalan saat halaman dimuat
+        window.onload = () => {
+            // 1. Periksa Sesi Keamanan
+            const userDataString = sessionStorage.getItem('loggedInUser');
+            if (!userDataString) {
+                window.location.href = 'login.html'; // atau index.html
+                return;
+            }
             
-            loginButton.disabled = true;
-            loginButton.textContent = 'MEMPROSES...';
-            errorMessage.textContent = ''; 
+            const user = JSON.parse(userDataString);
 
-            const formData = new FormData(form);
+            // 2. Sapa Pengguna di Header
+            userNameEl.textContent = user.nama_lengkap;
 
-            fetch(webAppUrl, { method: 'POST', body: formData })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success' && data.user) {
-                    // [PERUBAHAN] Toast untuk login sukses
-                    Toastify({
-                        text: "Login berhasil! Mengarahkan ke dashboard...",
-                        duration: 2000, gravity: "bottom", position: "right",
-                        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
-                    }).showToast();
-                    sessionStorage.setItem('loggedInUser', JSON.stringify(data.user));
-                    window.location.href = 'dashboard.html';
-                } else {
-                    // [PERUBAHAN] Toast untuk login gagal
-                    Toastify({
-                        text: data.message,
-                        duration: 3000, gravity: "bottom", position: "right",
-                        backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                    }).showToast();
-                    errorMessage.textContent = data.message;
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Toastify({
-                    text: "Terjadi masalah koneksi. Coba lagi.",
-                    duration: 3000, gravity: "bottom", position: "right",
-                    backgroundColor: "linear-gradient(to right, #ff5f6d, #ffc371)",
-                }).showToast();
-                errorMessage.textContent = 'Terjadi masalah koneksi.';
-            })
-            .finally(() => {
-                loginButton.disabled = false;
-                loginButton.textContent = 'MASUK';
-            });
+            // 3. Minta Konten Dashboard Sesuai Role
+            loadDashboardContent(user.id_role);
+        };
+
+        function loadDashboardContent(roleId) {
+            dashboardContent.innerHTML = '<p>Memuat konten...</p>';
+            fetch(`${webAppUrl}?action=getDashboardContent&role_id=${roleId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        dashboardContent.innerHTML = data.htmlContent;
+                    } else {
+                        dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat konten: ${data.message}</p>`;
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    dashboardContent.innerHTML = `<p style="color: red;">Gagal terhubung ke server.</p>`;
+                });
+        }
+
+        // Fungsi Logout
+        logoutButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            sessionStorage.removeItem('loggedInUser');
+            window.location.href = 'login.html'; // atau index.html
         });
+        
+        // Fungsi untuk tombol Hamburger
+        hamburgerButton.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+        });
+        
+        // Opsional: Tutup sidebar saat diklik di luar area sidebar (di mobile)
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 992 && !sidebar.contains(e.target) && !hamburgerButton.contains(e.target)) {
+                sidebar.classList.remove('show');
+            }
+        });
+
     </script>
 </body>
 </html>
+
 
