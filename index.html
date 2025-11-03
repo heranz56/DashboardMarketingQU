@@ -16,14 +16,16 @@
                 <p>Monitoring bisnis Marketing secara real-time dengan data yang akurat dan terpusat.</p>
             </div>
         </div>
+
         <div class="form-side">
             <div class="form-content">
                 <div class="form-header">
                     <h2>Selamat Datang!</h2>
                     <p>Silakan masuk untuk melanjutkan.</p>
                 </div>
-                <!-- PERUBAHAN: Menggunakan iframe, menghapus Javascript fetch -->
-                <form name="login-form" method="POST" target="hidden_iframe_login">
+                
+                <!-- Form sekarang akan ditangani sepenuhnya oleh JavaScript -->
+                <form name="login-form">
                     <input type="hidden" name="action" value="login">
                     <div class="input-group">
                         <label for="email">Email</label>
@@ -33,23 +35,71 @@
                         <label for="password">Password</label>
                         <input type="password" id="password" name="password" placeholder="Masukkan password Anda" required>
                     </div>
+                    
                     <a href="forgot-password.html" class="forgot-password">Lupa Password?</a>
+                    
                     <button type="submit" class="btn btn-primary">MASUK</button>
-                    <!-- Tombol lain tidak berubah -->
+                    
+                    <!-- Elemen untuk menampilkan pesan error -->
+                    <p id="error-message" style="color: red; text-align: center; margin-top: 15px; height: 20px;"></p>
+                    
+                    <div class="divider">
+                        <span>atau</span>
+                    </div>
+                    
+                    <button type="button" class="btn btn-secondary">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google Logo">
+                        Masuk dengan Google
+                    </button>
                 </form>
+                
                 <div class="form-footer">
                     <p>Belum punya akun? <a href="signup.html">Daftar Sekarang</a></p>
                 </div>
             </div>
         </div>
     </div>
-    <!-- iframe tersembunyi untuk login -->
-    <iframe name="hidden_iframe_login" style="display:none;"></iframe>
+
     <script>
-        // Javascript sederhana untuk mengatur URL form
-        document.forms['login-form'].action = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
-        // Karena kita tidak bisa membaca respons dari iframe, kita tidak bisa menangani error atau sukses secara dinamis.
-        // Fungsionalitas lanjutan memerlukan hosting file HTML.
+        const form = document.forms['login-form'];
+        const loginButton = document.querySelector('button[type="submit"]');
+        const errorMessage = document.getElementById('error-message');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // Mencegah form refresh halaman
+
+            // PASTIKAN URL INI ADALAH URL DEPLOYMENT ANDA YANG BENAR
+            const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
+            
+            loginButton.disabled = true;
+            loginButton.textContent = 'MEMPROSES...';
+            errorMessage.textContent = ''; 
+
+            const formData = new FormData(form);
+
+            fetch(webAppUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Jika login berhasil, arahkan ke halaman dashboard
+                    window.location.href = 'dashboard.html';
+                } else {
+                    // Jika gagal, tampilkan pesan error
+                    errorMessage.textContent = data.message;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                errorMessage.textContent = 'Terjadi masalah koneksi. Silakan coba lagi.';
+            })
+            .finally(() => {
+                loginButton.disabled = false;
+                loginButton.textContent = 'MASUK';
+            });
+        });
     </script>
 </body>
 </html>
