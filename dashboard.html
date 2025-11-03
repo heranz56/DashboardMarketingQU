@@ -94,7 +94,7 @@
         window.onload = () => {
             const userDataString = sessionStorage.getItem('loggedInUser');
             if (!userDataString) {
-                window.location.replace('login.html');
+                window.location.replace('index.html');
                 return; 
             }
             try {
@@ -104,7 +104,7 @@
             } catch (error) {
                 console.error("Data sesi rusak:", error);
                 sessionStorage.removeItem('loggedInUser');
-                window.location.replace('login.html');
+                window.location.replace('index.html');
             }
             const currentTheme = localStorage.getItem('theme');
             if (currentTheme === 'dark') {
@@ -133,7 +133,7 @@
         logoutButton.addEventListener('click', (e) => {
             e.preventDefault();
             sessionStorage.removeItem('loggedInUser');
-            window.location.replace('login.html');
+            window.location.replace('index.html');
         });
         
         themeCheckbox.addEventListener('change', function() {
@@ -170,4 +170,5 @@
     </script>
 </body>
 </html>
+
 
