@@ -53,8 +53,14 @@
             currentUser = JSON.parse(userDataString);
             userNameEl.textContent = currentUser.nama_lengkap;
             loadInitialDashboard(currentUser.id_role);
-        } catch (e) { /* ... (penanganan error sesi) ... */ }
-        // ... (logika dark mode)
+        } catch (e) { console.error("Data sesi rusak:", e);
+                sessionStorage.removeItem('loggedInUser');
+                window.location.replace('index.html'); }
+       const currentTheme = localStorage.getItem('theme');
+            if (currentTheme === 'dark') {
+                document.body.classList.replace('light-mode', 'dark-mode');
+                themeCheckbox.checked = true;
+            }
     };
 
         function loadInitialDashboard(roleId) {
@@ -288,6 +294,7 @@
     </script>
 </body>
 </html>
+
 
 
 
