@@ -147,10 +147,11 @@
             const tableHead = document.querySelector('#data-table thead');
             let allData = pageData.data || [];
 
-            function renderTable(dataToRender, headers) {
+            function renderTable(dataToRender) {
+                tableHead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
                 tableBody.innerHTML = '';
                 if (dataToRender.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="${headers.length}" style="text-align:center;">Data tidak ditemukan.</td></tr>`;
+                    tableBody.innerHTML = `<tr><td colspan="${headers.length}" style="text-align:center; padding: 20px;">Data tidak ditemukan.</td></tr>`;
                     return;
                 }
                 dataToRender.forEach(row => {
@@ -164,14 +165,16 @@
                 });
             }
 
-            const headers = pageData.headers;
-            tableHead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
-            renderTable(allData.reverse(), headers);
+            rrenderTable(allData.reverse()); // Tampilkan data awal (terbaru di atas)
 
             searchInput.addEventListener('input', () => {
                 const searchTerm = searchInput.value.toLowerCase();
-                const filteredData = allData.filter(row => Object.values(row).some(val => String(val).toLowerCase().includes(searchTerm)));
-                renderTable(filteredData, headers);
+                const filteredData = allData.filter(row => 
+                    Object.values(row).some(val => 
+                        String(val).toLowerCase().includes(searchTerm)
+                    )
+                );
+                renderTable(filteredData);
             });
 
             const modal = document.getElementById('add-modal');
@@ -180,6 +183,7 @@
             window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
         }
 
+        // --- Event Listener Global ---
         dashboardContent.addEventListener('submit', e => {
             if (e.target.id === 'form-register-aplikasi') {
                 e.preventDefault();
@@ -194,7 +198,7 @@
                         if (data.status === 'success') {
                             form.reset();
                             document.getElementById('add-modal').style.display = "none";
-                            loadPageContent('registerAplikasi');
+                            loadPageContent('registerAplikasi'); // Muat ulang halaman untuk refresh data
                         }
                     })
                     .catch(err => Toastify({ text: "Error koneksi.", style: { background: 'red' } }).showToast())
@@ -291,3 +295,4 @@
     </script>
 </body>
 </html>
+
