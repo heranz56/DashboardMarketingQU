@@ -273,3 +273,51 @@ input:checked + .slider:before { transform: translateX(20px); }
 .dot.yellow { background-color: #F59E0B; }
 .dot.red { background-color: #EF4444; }
 .dot.blue { background-color: #3B82F6; }
+
+.card-column {
+    display: flex;
+    flex-direction: column;
+    gap: 25px; /* Jarak antara kartu di kolom yang sama */
+}
+
+.list-card .top-list {
+    list-style: none;
+    padding: 0;
+}
+
+.list-card .top-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+}
+
+.list-card .top-list li:last-child {
+    border-bottom: none;
+}
+
+.list-card .list-name {
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.list-card .list-count {
+    font-weight: 600;
+    background-color: var(--bg);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.chart-card {
+    /* Mengambil 2/3 ruang jika tersedia */
+    grid-column: span 2;
+}
+
+@media (max-width: 1200px) {
+    .chart-card {
+        grid-column: span 1; /* Di layar lebih kecil, buat semua kartu sama besar */
+    }
+}
