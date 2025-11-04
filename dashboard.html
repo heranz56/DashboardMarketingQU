@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="light-mode dashboard-page">
 
@@ -119,6 +120,44 @@
                 </div>
 
                 <!-- Nanti baris untuk Grafik dan Top List akan ditambahkan di sini -->
+                <div class="card-row" style="margin-top: 30px;">
+                    <!-- Kolom Kiri: Top Lists -->
+                    <div class="card-column">
+                        <!-- Card Top 5 Request Name -->
+                        <div class="card list-card">
+                            <div class="card-header">
+                                <h3>Top 5 Request Name</h3>
+                            </div>
+                            <div class="card-body">
+                                <ul id="top5-request-list" class="top-list">
+                                    <li>Memuat...</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- Card Top 4 Marketing -->
+                        <div class="card list-card">
+                            <div class="card-header">
+                                <h3>Top 4 Marketing Favorit</h3>
+                            </div>
+                            <div class="card-body">
+                                <ul id="top4-marketing-list" class="top-list">
+                                    <li>Memuat...</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Kolom Kanan: Grafik -->
+                    <div class="card chart-card">
+                        <div class="card-header">
+                            <h3>Performa Marketing</h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- Di sinilah grafik akan dirender oleh Chart.js -->
+                            <canvas id="marketingChart"></canvas>
+                        </div>
+                    </div>
+                </div>
 
                 </main>
 
@@ -259,6 +298,7 @@
     </script>
 </body>
 </html>
+
 
 
 
