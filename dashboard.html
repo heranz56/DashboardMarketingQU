@@ -33,6 +33,7 @@
     </div>
 
     <script>
+        // --- Elemen UI ---
         const userNameEl = document.getElementById('user-name');
         const sidebarNav = document.querySelector('.sidebar-nav');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -44,35 +45,39 @@
         const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
         let currentUser;
 
+        // --- Fungsi Utama ---
         window.onload = () => {
             const userDataString = sessionStorage.getItem('loggedInUser');
-            if (!userDataString) return void window.location.replace('index.html');
+            if (!userDataString) {
+                return void window.location.replace('index.html');
+            }
             try {
                 currentUser = JSON.parse(userDataString);
                 userNameEl.textContent = currentUser.nama_lengkap;
-                loadInitialDashboard(currentUser.id_role);
+                loadInitialData(currentUser.id_role);
             } catch (e) {
+                console.error("Data sesi rusak:", e);
                 sessionStorage.removeItem('loggedInUser');
                 window.location.replace('index.html');
             }
             const currentTheme = localStorage.getItem('theme');
-            if ("dark" === currentTheme) {
+            if (currentTheme === 'dark') {
                 document.body.classList.replace('light-mode', 'dark-mode');
                 themeCheckbox.checked = true;
             }
         };
 
-        function loadInitialDashboard(roleId) {
+        function loadInitialData(roleId) {
             fetch(`${webAppUrl}?action=getInitialDashboardLoad&role_id=${roleId}`)
                 .then(res => res.json())
                 .then(data => {
-                    if (data.status !== 'success') throw new Error('Gagal memuat data awal.');
-                    
+                    if (data.status !== 'success') {
+                        throw new Error('Gagal memuat data awal.');
+                    }
                     sidebarNav.innerHTML = data.sidebarHtml;
                     setupMenuNavigation();
-                    
                     dashboardContent.innerHTML = data.homePageHtml;
-                    initHomePage(data.homePageData.data);
+                    initHomePage(data.homePageData); // Kirim data langsung
                 })
                 .catch(err => {
                     console.error(err);
@@ -86,11 +91,9 @@
                 const navItem = e.target.closest('.nav-item');
                 if (!navItem || !navItem.dataset.page) return;
                 e.preventDefault();
-                
                 document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
                 navItem.classList.add('active');
                 document.querySelector('.header-title').textContent = navItem.querySelector('span').textContent;
-                
                 loadPageContent(navItem.dataset.page);
             });
         }
@@ -100,8 +103,12 @@
             
             // Jika halaman utama, kita hanya perlu refresh datanya
             if (pageName === 'halamanUtama') {
-                dashboardContent.innerHTML = getHomePageHtml(); // Tampilkan kerangka HTML lagi
-                initHomePage(); // Panggil fungsi untuk mengisi data
+                fetch(`${webAppUrl}?action=getPageContent&page=halamanUtama`)
+                    .then(res => res.json())
+                    .then(data => {
+                        dashboardContent.innerHTML = data.htmlContent;
+                        initHomePage(); // Panggil fungsi untuk mengisi data
+                    });
                 return;
             }
 
@@ -121,8 +128,175 @@
                 });
         }
         
-        // ... (Sisa script sama persis seperti versi lengkap terakhir yang sudah terverifikasi)
+        // [DIKEMBALIKAN] Fungsi untuk menginisialisasi Halaman Utama
+        function initHomePage(pageData = null) {
+            if (pageData) {
+                // Ini adalah pemuatan pertama, data sudah ada
+                fillSummaryCards(pageData);
+                fillTopLists(pageData);
+                renderCharts(pageData);
+            } else {
+                // Ini adalah refresh (misal, setelah klik menu Halaman Utama lagi)
+                fetch(`${webAppUrl}?action=getHomePageData`)
+                    .then(res => res.json())
+                    .then(result => {
+                        if (result.status === 'success') {
+                            fillSummaryCards(result.data);
+                            fillTopLists(result.data);
+                            renderCharts(result.data);
+                        }
+                    })
+                    .catch(err => {
+                        console.error("Gagal me-refresh data konten:", err);
+                    });
+            }
+        }
+        
+        // [DIKEMBALIKAN] Fungsi untuk menginisialisasi halaman Register Aplikasi
+        function initRegisterAplikasiPage() {
+            const searchInput = document.getElementById('search-input');
+            const tableBody = document.querySelector('#data-table tbody');
+            const tableHead = document.querySelector('#data-table thead');
+            let allData = [];
 
+            function renderTable(dataToRender, headers) {
+                tableBody.innerHTML = '';
+                if (dataToRender.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="${headers.length}" style="text-align:center;">Data tidak ditemukan.</td></tr>`;
+                    return;
+                }
+                dataToRender.forEach(row => {
+                    const tr = document.createElement('tr');
+                    let rowHtml = '';
+                    headers.forEach(header => {
+                        rowHtml += `<td>${row[header] || ''}</td>`;
+                    });
+                    tr.innerHTML = rowHtml;
+                    tableBody.appendChild(tr);
+                });
+            }
+
+            fetch(`${webAppUrl}?action=getDataRegister`)
+                .then(res => res.json())
+                .then(result => {
+                    if (result.status === 'success') {
+                        allData = result.data.reverse();
+                        const headers = result.headers;
+                        tableHead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+                        renderTable(allData, headers);
+                    } else {
+                        tableBody.innerHTML = `<tr><td colspan="100%" style="color:red;">Gagal memuat data tabel.</td></tr>`;
+                    }
+                });
+
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const headers = Array.from(tableHead.querySelectorAll('th')).map(th => th.textContent);
+                const filteredData = allData.filter(row => Object.values(row).some(val => String(val).toLowerCase().includes(searchTerm)));
+                renderTable(filteredData, headers);
+            });
+
+            const modal = document.getElementById('add-modal');
+            document.getElementById('add-register-btn').onclick = () => modal.style.display = "block";
+            document.querySelector('.close-modal').onclick = () => modal.style.display = "none";
+            window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
+        }
+
+        // [DIKEMBALIKAN] Fungsi untuk mengisi kartu ringkasan
+        function fillSummaryCards(homeData) {
+            const card1 = homeData.cardRegisterAplikasi;
+            document.getElementById('app-total').textContent = card1.total || 0;
+            document.getElementById('app-realisasi').textContent = card1.realisasi || 0;
+            document.getElementById('app-pending').textContent = card1.pending || 0;
+            document.getElementById('app-batal').textContent = card1.batal || 0;
+            
+            const card2 = homeData.cardPengirimanPolis;
+            document.getElementById('ship-total').textContent = card2.total || 0;
+            document.getElementById('ship-terkirim').textContent = card2.terkirim || 0;
+            document.getElementById('ship-perjalanan').textContent = card2.dalamPerjalanan || 0;
+            document.getElementById('ship-return').textContent = card2.return || 0;
+
+            const card3 = homeData.cardRegisterKlaim;
+            document.getElementById('claim-total').textContent = card3.total || 0;
+            document.getElementById('claim-selesai').textContent = card3.selesai || 0;
+            document.getElementById('claim-proses').textContent = card3.onProses || 0;
+            document.getElementById('claim-ditolak').textContent = card3.ditolak || 0;
+
+            const card4 = homeData.cardMarketingPlan;
+            document.getElementById('plan-total').textContent = card4.total || 0;
+            document.getElementById('plan-realisasi').textContent = card4.realisasi || 0;
+            document.getElementById('plan-proses').textContent = card4.onProses || 0;
+            document.getElementById('plan-draft').textContent = card4.draft || 0;
+            document.getElementById('plan-batal').textContent = card4.batal || 0;
+        }
+
+        // [DIKEMBALIKAN] Fungsi untuk mengisi top list
+        function fillTopLists(homeData) {
+            const top5List = document.getElementById('top5-request-list');
+            top5List.innerHTML = '';
+            if (homeData.top5RequestName && homeData.top5RequestName.length > 0) {
+                homeData.top5RequestName.forEach(item => {
+                    top5List.innerHTML += `<li><span class="list-name">${item.name}</span> <span class="list-count">${item.count}</span></li>`;
+                });
+            } else {
+                top5List.innerHTML = '<li>Tidak ada data.</li>';
+            }
+            
+            const top4List = document.getElementById('top4-marketing-list');
+            top4List.innerHTML = '';
+            if (homeData.top4Marketing && homeData.top4Marketing.length > 0) {
+                homeData.top4Marketing.forEach(item => {
+                    top4List.innerHTML += `<li><span class="list-name">${item.name}</span> <span class="list-count">${item.count} Aplikasi</span></li>`;
+                });
+            } else {
+                top4List.innerHTML = '<li>Tidak ada data.</li>';
+            }
+        }
+
+        // [DIKEMBALIKAN] Fungsi untuk merender grafik
+        function renderCharts(homeData) {
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    datalabels: {
+                        anchor: 'end', align: 'top',
+                        color: getComputedStyle(document.body).getPropertyValue('--text-primary'),
+                        font: { weight: 'bold' }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary'), stepSize: 1 }, grid: { color: getComputedStyle(document.body).getPropertyValue('--border') } },
+                    x: { ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary') }, grid: { display: false } }
+                }
+            };
+
+            if(window.myAppChart) window.myAppChart.destroy();
+            window.myAppChart = new Chart(document.getElementById('appChart').getContext('2d'), {
+                type: 'bar', data: homeData.appChart, options: chartOptions, plugins: [ChartDataLabels]
+            });
+
+            if(window.myPlanChart) window.myPlanChart.destroy();
+            window.myPlanChart = new Chart(document.getElementById('planChart').getContext('2d'), {
+                type: 'bar', data: homeData.planChart, options: chartOptions, plugins: [ChartDataLabels]
+            });
+        }
+       
+        // --- Event Listener Lainnya ---
+        logoutButton.addEventListener('click', e => { e.preventDefault(); sessionStorage.removeItem('loggedInUser'); window.location.replace('index.html'); });
+        themeCheckbox.addEventListener('change', function() { if (this.checked) { document.body.classList.replace('light-mode', 'dark-mode'); localStorage.setItem('theme', 'dark'); } else { document.body.classList.replace('dark-mode', 'light-mode'); localStorage.setItem('theme', 'light'); } });
+        hamburgerButton.addEventListener('click', () => { sidebar.classList.add('show'); overlay.classList.add('show'); });
+        function closeSidebar() { sidebar.classList.remove('show'); overlay.classList.remove('show'); }
+        overlay.addEventListener('click', closeSidebar);
+        document.querySelector('.sidebar').addEventListener('click', e => {
+            const navItem = e.target.closest('.nav-item');
+            if (window.innerWidth <= 992 && navItem && !navItem.id && !navItem.closest('.theme-switch-wrapper')) {
+                closeSidebar();
+            }
+        });
+    
     </script>
 </body>
 </html>
+
