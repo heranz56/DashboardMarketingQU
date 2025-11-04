@@ -64,7 +64,7 @@
     };
 
         function loadInitialDashboard(roleId) {
-        fetch(`${webAppUrl}?action=getInitialDashboardLoadData&role_id=${roleId}`)
+        fetch(`${webAppUrl}?action=getInitialDashboardLoad&role_id=${roleId}`)
             .then(res => res.json())
             .then(data => {
                 if (data.status !== 'success') throw new Error('Gagal memuat data awal.');
@@ -294,6 +294,7 @@
     </script>
 </body>
 </html>
+
 
 
 
