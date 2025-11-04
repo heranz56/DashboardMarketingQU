@@ -252,10 +252,10 @@
                         options: {
                             responsive: true, maintainAspectRatio: false,
                             plugins: [ChartDataLabels],
-                            //scales: {
-                                // y: { beginAtZero: true, ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary'), stepSize: 1 }, grid: { color: getComputedStyle(document.body).getPropertyValue('--border') } },
-                                // x: { ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary') }, grid: { display: false } }
-                           // }
+                            scales: {
+                                 y: { beginAtZero: true, ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary'), stepSize: 1 }, grid: { color: getComputedStyle(document.body).getPropertyValue('--border') } },
+                                 x: { ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary') }, grid: { display: false } }
+                            }
                         }
                     });
 
@@ -268,11 +268,11 @@
                         options: {
                             responsive: true, maintainAspectRatio: false,
                             plugins: [ChartDataLabels],
-                           // scales: {
-                           //     y: { beginAtZero: true, ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary'), stepSize: 1 }, grid: { color: getComputedStyle(document.body).getPropertyValue('--border') } },
+                            scales: {
+                               y: { beginAtZero: true, ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary'), stepSize: 1 }, grid: { color: getComputedStyle(document.body).getPropertyValue('--border') } },
                                 x: { ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary') }, grid: { display: false } }
-                           // }
-                       // }
+                            }
+                       }
                     });
                 })
                 .catch(err => {
@@ -292,4 +292,5 @@
     </script>
 </body>
 </html>
+
 
