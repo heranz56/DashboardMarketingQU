@@ -65,6 +65,7 @@
         const hamburgerButton = document.getElementById('hamburger-button');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.overlay');
+        const sidebarNav = document.querySelector('.sidebar-nav'); // [BARU] Targetkan navigasi
         
         const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
 
@@ -77,7 +78,7 @@
             try {
                 const user = JSON.parse(userDataString);
                 userNameEl.textContent = user.nama_lengkap;
-                loadDashboardContent(user.id_role);
+                loadDashboardData(user.id_role);
             } catch (error) {
                 sessionStorage.removeItem('loggedInUser');
                 window.location.replace('index.html');
@@ -89,18 +90,26 @@
             }
         };
 
-        function loadDashboardContent(roleId) {
+        function loadDashboardData(roleId) {
+            sidebarNav.innerHTML = '<p style="padding: 20px; color: var(--text-secondary);">Memuat menu...</p>';
             dashboardContent.innerHTML = '<p>Memuat konten...</p>';
-            fetch(`${webAppUrl}?action=getDashboardContent&role_id=${roleId}`)
+            
+            fetch(`${webAppUrl}?action=getDashboardData&role_id=${roleId}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.status === 'success') {
-                        dashboardContent.innerHTML = data.htmlContent;
+                        // Tampilkan sidebar dinamis
+                        sidebarNav.innerHTML = data.sidebarHtml;
+                        // Tampilkan konten utama
+                        dashboardContent.innerHTML = data.contentHtml;
                     } else {
-                        dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat konten: ${data.message}</p>`;
+                        sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Gagal memuat menu.</p>`;
+                        dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat konten.</p>`;
                     }
                 })
                 .catch(err => {
+                    console.error(err);
+                    sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Error koneksi.</p>`;
                     dashboardContent.innerHTML = `<p style="color: red;">Gagal terhubung ke server.</p>`;
                 });
         }
@@ -145,3 +154,4 @@
     </script>
 </body>
 </html>
+
