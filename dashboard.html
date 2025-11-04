@@ -68,23 +68,23 @@
         };
 
         function loadInitialData(roleId) {
-    fetch(`${webAppUrl}?action=getDashboardData&role_id=${roleId}`)
+    // [PERBAIKAN] Menggunakan action yang benar: 'getInitialDashboardLoad'
+    fetch(`${webAppUrl}?action=getInitialDashboardLoad&role_id=${roleId}`)
         .then(res => res.json())
         .then(data => {
-            console.log("Respons dari getDashboardData:", data); // <-- TAMBAHKAN BARIS INI
+            if (data.status !== 'success') throw new Error('Gagal memuat data awal dari server.');
             
-            if (data.status === 'success' && data.sidebarHtml) {
-                sidebarNav.innerHTML = data.sidebarHtml;
-                setupMenuNavigation();
-                loadPageContent('halamanUtama');
-            } else {
-                // Tampilkan pesan error dari server jika ada
-                sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Gagal memuat menu: ${data.message || 'Respons tidak valid'}</p>`;
-            }
+            // Isi sidebar DAN konten utama dari satu respons
+            sidebarNav.innerHTML = data.sidebarHtml;
+            dashboardContent.innerHTML = data.homePageHtml;
+            
+            setupMenuNavigation();
+            initHomePage(data.homePageData); // Kirim data yang sudah diterima
         })
         .catch(err => {
-            console.error("Error saat fetch menu:", err);
-            sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Error koneksi saat memuat menu.</p>`;
+            console.error("Error di loadInitialData:", err);
+            sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Gagal memuat menu.</p>`;
+            dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat konten dashboard.</p>`;
         });
 }
         function setupMenuNavigation() {
@@ -301,4 +301,5 @@
     </script>
 </body>
 </html>
+
 
