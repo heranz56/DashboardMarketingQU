@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 </head>
-<body class="light-mode dashboard-page">
+<body class="dark-mode dashboard-page">
 
     <div class="dashboard-layout">
         <!-- ===== SIDEBAR (MENU KIRI) ===== -->
@@ -48,7 +48,6 @@
                     </div>
                     <div class="user-profile">
                         <span id="user-name">Memuat...</span>
-                        <!-- [PERBAIKAN] Menggunakan ikon Font Awesome, bukan gambar -->
                         <i class="fa-solid fa-user-circle user-avatar"></i>
                     </div>
                 </div>
@@ -133,7 +132,7 @@
         <div class="overlay"></div>
     </div>
 
-   <script>
+    <script>
         // --- Elemen UI ---
         const userNameEl = document.getElementById('user-name');
         const sidebarNav = document.querySelector('.sidebar-nav');
@@ -196,13 +195,8 @@
                     
                     const homeData = result.data;
                     
-                    // Isi Kartu Ringkasan
                     fillSummaryCards(homeData);
-                    
-                    // Isi Kartu Top List
                     fillTopLists(homeData);
-
-                    // Render Grafik
                     renderCharts(homeData);
                 })
                 .catch(err => {
@@ -280,7 +274,6 @@
                 }
             };
 
-            // Grafik 1: Aplikasi
             const appChartData = homeData.appChart;
             const ctxApp = document.getElementById('appChart').getContext('2d');
             if(window.myAppChart) window.myAppChart.destroy();
@@ -291,7 +284,6 @@
                 plugins: [ChartDataLabels]
             });
 
-            // Grafik 2: Plan
             const planChartData = homeData.planChart;
             const ctxPlan = document.getElementById('planChart').getContext('2d');
             if(window.myPlanChart) window.myPlanChart.destroy();
@@ -309,11 +301,17 @@
         hamburgerButton.addEventListener('click', () => { sidebar.classList.add('show'); overlay.classList.add('show'); });
         function closeSidebar() { sidebar.classList.remove('show'); overlay.classList.remove('show'); }
         overlay.addEventListener('click', closeSidebar);
-        document.querySelectorAll('.sidebar .nav-item').forEach(item => { item.addEventListener('click', (e) => { if (window.innerWidth <= 992) { if (e.currentTarget.id !== 'logout-button' && !e.currentTarget.closest('.theme-switch-wrapper')) { closeSidebar(); } } }); });
+        document.querySelectorAll('.sidebar').forEach(side => {
+            side.addEventListener('click', (e) => {
+                const target = e.target.closest('.nav-item');
+                if (window.innerWidth <= 992 && target) {
+                    if (target.id !== 'logout-button' && !target.closest('.theme-switch-wrapper')) {
+                        closeSidebar();
+                    }
+                }
+            });
+        });
     
     </script>
 </body>
 </html>
-
-
-
