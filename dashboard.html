@@ -13,47 +13,20 @@
 <body class="dark-mode dashboard-page">
 
     <div class="dashboard-layout">
-        <!-- ===== SIDEBAR (MENU KIRI) ===== -->
         <aside class="sidebar">
-            <div class="sidebar-header">
-                <i class="fa-solid fa-chart-line"></i>
-                <span class="logo-text">Dashboard</span>
-            </div>
-            <nav class="sidebar-nav">
-                <p style="padding: 20px; color: var(--text-secondary);">Memuat menu...</p>
-            </nav>
+            <div class="sidebar-header"><i class="fa-solid fa-chart-line"></i><span class="logo-text">Dashboard</span></div>
+            <nav class="sidebar-nav"><p style="padding: 20px; color: var(--text-secondary);">Memuat menu...</p></nav>
             <div class="sidebar-footer">
-                <div class="theme-switch-wrapper">
-                    <label class="theme-switch" for="theme-checkbox">
-                        <input type="checkbox" id="theme-checkbox" />
-                        <div class="slider round"></div>
-                    </label>
-                </div>
+                <div class="theme-switch-wrapper"><label class="theme-switch" for="theme-checkbox"><input type="checkbox" id="theme-checkbox" /><div class="slider round"></div></label></div>
                 <a href="#" id="logout-button" class="nav-item"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
             </div>
         </aside>
-
-        <!-- ===== KONTEN UTAMA (KANAN) ===== -->
         <div class="main-content">
             <header class="header">
-                <div class="header-left">
-                    <button id="hamburger-button" class="hamburger-btn"><i class="fa-solid fa-bars"></i></button>
-                    <h1 class="header-title">Halaman Utama</h1>
-                </div>
-                <div class="header-right">
-                    <div class="search-bar">
-                        <i class="fa-solid fa-search"></i>
-                        <input type="text" placeholder="Cari...">
-                    </div>
-                    <div class="user-profile">
-                        <span id="user-name">Memuat...</span>
-                        <i class="fa-solid fa-user-circle user-avatar"></i>
-                    </div>
-                </div>
+                <div class="header-left"><button id="hamburger-button" class="hamburger-btn"><i class="fa-solid fa-bars"></i></button><h1 class="header-title">Halaman Utama</h1></div>
+                <div class="header-right"><div class="search-bar"><i class="fa-solid fa-search"></i><input type="text" placeholder="Cari..."></div><div class="user-profile"><span id="user-name">Memuat...</span><i class="fa-solid fa-user-circle user-avatar"></i></div></div>
             </header>
-            <main id="dashboard-content" class="content-area">
-                <p>Memuat konten...</p>
-            </main>
+            <main id="dashboard-content" class="content-area"><p>Memuat konten...</p></main>
         </div>
         <div class="overlay"></div>
     </div>
@@ -68,6 +41,7 @@
         const hamburgerButton = document.getElementById('hamburger-button');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.overlay');
+        
         const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
         let currentUser;
 
@@ -100,14 +74,11 @@
                     if (data.status === 'success') {
                         sidebarNav.innerHTML = data.sidebarHtml;
                         setupMenuNavigation();
+                        loadPageContent('halamanUtama');
                     } else {
                         sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Gagal memuat menu.</p>`;
                     }
-                })
-                .then(() => {
-                    loadPageContent('halamanUtama');
-                })
-                .catch(err => {
+                }).catch(err => {
                     sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Error koneksi.</p>`;
                 });
         }
@@ -127,7 +98,7 @@
         }
 
         function loadPageContent(pageName) {
-            dashboardContent.innerHTML = '<div class="card"><div class="card-body" style="text-align: center;"><p>Memuat halaman...</p></div></div>`;
+            dashboardContent.innerHTML = `<div class="card"><div class="card-body" style="text-align: center;"><p>Memuat halaman...</p></div></div>`;
             fetch(`${webAppUrl}?action=getPageContent&page=${pageName}`)
                 .then(res => res.json())
                 .then(data => {
@@ -159,7 +130,7 @@
                 })
                 .catch(err => {
                     console.error("Gagal memuat data konten:", err);
-                    dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat konten dashboard.</p>`;
+                    dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat konten dashboard. Silakan refresh halaman.</p>`;
                 });
         }
 
@@ -233,7 +204,7 @@
                     .finally(() => submitButton.disabled = false);
             }
         });
-
+        
         function fillSummaryCards(homeData) {
             document.getElementById('app-total').textContent = homeData.cardRegisterAplikasi.total || 0;
             document.getElementById('app-realisasi').textContent = homeData.cardRegisterAplikasi.realisasi || 0;
@@ -286,7 +257,8 @@
                 plugins: {
                     legend: { display: false },
                     datalabels: {
-                        anchor: 'end', align: 'top',
+                        anchor: 'end',
+                        align: 'top',
                         color: getComputedStyle(document.body).getPropertyValue('--text-primary'),
                         font: { weight: 'bold' }
                     }
@@ -299,12 +271,18 @@
 
             if(window.myAppChart) window.myAppChart.destroy();
             window.myAppChart = new Chart(document.getElementById('appChart').getContext('2d'), {
-                type: 'bar', data: homeData.appChart, options: chartOptions, plugins: [ChartDataLabels]
+                type: 'bar',
+                data: homeData.appChart,
+                options: chartOptions,
+                plugins: [ChartDataLabels]
             });
 
             if(window.myPlanChart) window.myPlanChart.destroy();
             window.myPlanChart = new Chart(document.getElementById('planChart').getContext('2d'), {
-                type: 'bar', data: homeData.planChart, options: chartOptions, plugins: [ChartDataLabels]
+                type: 'bar',
+                data: homeData.planChart,
+                options: chartOptions,
+                plugins: [ChartDataLabels]
             });
         }
        
@@ -323,4 +301,3 @@
     </script>
 </body>
 </html>
-
