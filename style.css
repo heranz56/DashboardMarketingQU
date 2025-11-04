@@ -201,7 +201,7 @@ input:checked + .slider:before { transform: translateX(20px); }
 .search-bar i { color: var(--text-secondary); }
 .search-bar input { background: none; border: none; outline: none; color: var(--text-primary); margin-left: 10px; width: 200px; }
 .user-profile { display: flex; align-items: center; gap: 10px; }
-.user-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+.user-avatar {font-size: 40px; color: var(--text-secondary); }
 
 .content-area { padding: 30px; }
 .card { background-color: var(--surface); padding: 25px; border-radius: 12px; border: 1px solid var(--border); }
@@ -321,3 +321,4 @@ input:checked + .slider:before { transform: translateX(20px); }
         grid-column: span 1; /* Di layar lebih kecil, buat semua kartu sama besar */
     }
 }
+
