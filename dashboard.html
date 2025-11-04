@@ -111,7 +111,7 @@
                         dashboardContent.innerHTML = data.htmlContent;
                         if (pageName === 'halamanUtama') {
                             initHomePage(data.pageData);
-                        } else if (pageName === 'registerAplikasi') {
+                        } else if (pageName === 'RegisterAplikasi') {
                             initRegisterAplikasiPage(data.pageData);
                         }
                     } else {
@@ -198,7 +198,7 @@
                         if (data.status === 'success') {
                             form.reset();
                             document.getElementById('add-modal').style.display = "none";
-                            loadPageContent('registerAplikasi'); // Muat ulang halaman untuk refresh data
+                            loadPageContent('RegisterAplikasi'); // Muat ulang halaman untuk refresh data
                         }
                     })
                     .catch(err => Toastify({ text: "Error koneksi.", style: { background: 'red' } }).showToast())
@@ -295,4 +295,5 @@
     </script>
 </body>
 </html>
+
 
