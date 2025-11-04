@@ -178,6 +178,8 @@
                 .then(data => {
                     if (data.status === 'success') {
                         sidebarNav.innerHTML = data.sidebarHtml;
+                        setupMenuNavigation();
+                        loadPageContent('halamanUtama'); 
                     } else {
                         sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Gagal memuat menu.</p>`;
                     }
@@ -315,3 +317,4 @@
     </script>
 </body>
 </html>
+
