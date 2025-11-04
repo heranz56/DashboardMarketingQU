@@ -20,7 +20,6 @@
                 <span class="logo-text">Dashboard</span>
             </div>
             <nav class="sidebar-nav">
-                <!-- Konten sidebar akan diisi oleh JavaScript -->
                 <p style="padding: 20px; color: var(--text-secondary);">Memuat menu...</p>
             </nav>
             <div class="sidebar-footer">
@@ -52,87 +51,14 @@
                     </div>
                 </div>
             </header>
-
             <main id="dashboard-content" class="content-area">
-                <!-- Baris untuk Kartu Ringkasan -->
-                <div class="card-row">
-                    <div class="card summary-card">
-                        <div class="card-header"><h3>Total Register Aplikasi</h3><i class="fa-solid fa-file-pen card-icon"></i></div>
-                        <div class="card-body">
-                            <h1 id="app-total">...</h1>
-                            <div class="sub-stats">
-                                <span><span class="dot green"></span>Realisasi: <strong id="app-realisasi">...</strong></span>
-                                <span><span class="dot yellow"></span>Pending: <strong id="app-pending">...</strong></span>
-                                <span><span class="dot red"></span>Batal: <strong id="app-batal">...</strong></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card summary-card">
-                        <div class="card-header"><h3>Total Pengiriman Polis</h3><i class="fa-solid fa-truck card-icon"></i></div>
-                        <div class="card-body">
-                            <h1 id="ship-total">...</h1>
-                            <div class="sub-stats">
-                                <span><span class="dot green"></span>Terkirim: <strong id="ship-terkirim">...</strong></span>
-                                <span><span class="dot yellow"></span>Perjalanan: <strong id="ship-perjalanan">...</strong></span>
-                                <span><span class="dot red"></span>Return: <strong id="ship-return">...</strong></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card summary-card">
-                        <div class="card-header"><h3>Total Register Klaim</h3><i class="fa-solid fa-hand-holding-dollar card-icon"></i></div>
-                        <div class="card-body">
-                            <h1 id="claim-total">...</h1>
-                            <div class="sub-stats">
-                                <span><span class="dot green"></span>Selesai: <strong id="claim-selesai">...</strong></span>
-                                <span><span class="dot yellow"></span>On Proses: <strong id="claim-proses">...</strong></span>
-                                <span><span class="dot red"></span>Ditolak: <strong id="claim-ditolak">...</strong></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card summary-card">
-                        <div class="card-header"><h3>Total Marketing Plan</h3><i class="fa-solid fa-bullhorn card-icon"></i></div>
-                        <div class="card-body">
-                            <h1 id="plan-total">...</h1>
-                            <div class="sub-stats">
-                                <span><span class="dot green"></span>Realisasi: <strong id="plan-realisasi">...</strong></span>
-                                <span><span class="dot yellow"></span>On Proses: <strong id="plan-proses">...</strong></span>
-                                <span><span class="dot blue"></span>Draft: <strong id="plan-draft">...</strong></span>
-                                <span><span class="dot red"></span>Batal: <strong id="plan-batal">...</strong></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Baris untuk Top List dan Grafik -->
-                <div class="card-row" style="margin-top: 30px;">
-                    <div class="card-column">
-                        <div class="card list-card">
-                            <div class="card-header"><h3>Top 5 Request Name</h3></div>
-                            <div class="card-body"><ul id="top5-request-list" class="top-list"><li>Memuat...</li></ul></div>
-                        </div>
-                        <div class="card list-card">
-                            <div class="card-header"><h3>Top 4 Marketing Favorit</h3></div>
-                            <div class="card-body"><ul id="top4-marketing-list" class="top-list"><li>Memuat...</li></ul></div>
-                        </div>
-                    </div>
-                    
-                    <div class="card-column" style="grid-column: span 2;">
-                        <div class="card chart-card">
-                            <div class="card-header"><h3>Aplikasi per Marketing</h3></div>
-                            <div class="card-body"><canvas id="appChart"></canvas></div>
-                        </div>
-                        <div class="card chart-card">
-                            <div class="card-header"><h3>Plan per Marketing</h3></div>
-                            <div class="card-body"><canvas id="planChart"></canvas></div>
-                        </div>
-                    </div>
-                </div>
+                <p>Memuat konten...</p>
             </main>
         </div>
         <div class="overlay"></div>
     </div>
 
-<script>
+    <script>
         // --- Elemen UI ---
         const userNameEl = document.getElementById('user-name');
         const sidebarNav = document.querySelector('.sidebar-nav');
@@ -142,11 +68,10 @@
         const hamburgerButton = document.getElementById('hamburger-button');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.overlay');
-        
         const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
         let currentUser;
 
-        // --- Fungsi Utama yang Berjalan Saat Halaman Dimuat ---
+        // --- Fungsi Utama ---
         window.onload = () => {
             const userDataString = sessionStorage.getItem('loggedInUser');
             if (!userDataString) {
@@ -155,7 +80,7 @@
             try {
                 currentUser = JSON.parse(userDataString);
                 userNameEl.textContent = currentUser.nama_lengkap;
-                loadInitialDashboard();
+                loadInitialData(currentUser.id_role);
             } catch (e) {
                 console.error("Data sesi rusak:", e);
                 sessionStorage.removeItem('loggedInUser');
@@ -168,19 +93,22 @@
             }
         };
 
-        function loadInitialDashboard() {
-            fetch(`${webAppUrl}?action=getDashboardData&role_id=${currentUser.id_role}`)
+        function loadInitialData(roleId) {
+            fetch(`${webAppUrl}?action=getDashboardData&role_id=${roleId}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.status === 'success') {
                         sidebarNav.innerHTML = data.sidebarHtml;
                         setupMenuNavigation();
-                        loadPageContent('halamanUtama');
                     } else {
                         sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Gagal memuat menu.</p>`;
                     }
-                }).catch(err => {
-                    sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Error koneksi menu.</p>`;
+                })
+                .then(() => {
+                    loadPageContent('halamanUtama');
+                })
+                .catch(err => {
+                    sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Error koneksi.</p>`;
                 });
         }
 
@@ -189,18 +117,17 @@
                 const navItem = e.target.closest('.nav-item');
                 if (!navItem || !navItem.dataset.page) return;
                 e.preventDefault();
-                const pageName = navItem.dataset.page;
                 
                 document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
                 navItem.classList.add('active');
                 document.querySelector('.header-title').textContent = navItem.querySelector('span').textContent;
                 
-                loadPageContent(pageName);
+                loadPageContent(navItem.dataset.page);
             });
         }
 
         function loadPageContent(pageName) {
-            dashboardContent.innerHTML = `<div class="card"><div class="card-body" style="text-align: center;"><p>Memuat halaman...</p></div></div>`;
+            dashboardContent.innerHTML = '<div class="card"><div class="card-body" style="text-align: center;"><p>Memuat halaman...</p></div></div>`;
             fetch(`${webAppUrl}?action=getPageContent&page=${pageName}`)
                 .then(res => res.json())
                 .then(data => {
@@ -218,24 +145,24 @@
                     dashboardContent.innerHTML = `<p style="color: red;">Error koneksi halaman.</p>`;
                 });
         }
-        
-        // --- Fungsi-fungsi Inisialisasi Halaman ---
+
         function initHomePage() {
             fetch(`${webAppUrl}?action=getHomePageData`)
                 .then(res => res.json())
                 .then(result => {
                     if (result.status !== 'success') {
-                        console.error("Gagal ambil data home");
-                        return;
+                        throw new Error(result.message || 'Data konten tidak valid');
                     }
                     fillSummaryCards(result.data);
                     fillTopLists(result.data);
                     renderCharts(result.data);
-                }).catch(err => {
+                })
+                .catch(err => {
                     console.error("Gagal memuat data konten:", err);
+                    dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat konten dashboard.</p>`;
                 });
         }
-        
+
         function initRegisterAplikasiPage() {
             const searchInput = document.getElementById('search-input');
             const tableBody = document.querySelector('#data-table tbody');
@@ -245,7 +172,7 @@
             function renderTable(dataToRender, headers) {
                 tableBody.innerHTML = '';
                 if (dataToRender.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="${headers.length}" style="text-align:center; padding: 20px;">Data tidak ditemukan.</td></tr>`;
+                    tableBody.innerHTML = `<tr><td colspan="${headers.length}" style="text-align:center;">Data tidak ditemukan.</td></tr>`;
                     return;
                 }
                 dataToRender.forEach(row => {
@@ -307,53 +234,48 @@
             }
         });
 
-        // --- Fungsi Pembantu untuk Mengisi Data Halaman Utama ---
         function fillSummaryCards(homeData) {
-            const card1 = homeData.cardRegisterAplikasi;
-            document.getElementById('app-total').textContent = card1.total || 0;
-            document.getElementById('app-realisasi').textContent = card1.realisasi || 0;
-            document.getElementById('app-pending').textContent = card1.pending || 0;
-            document.getElementById('app-batal').textContent = card1.batal || 0;
+            document.getElementById('app-total').textContent = homeData.cardRegisterAplikasi.total || 0;
+            document.getElementById('app-realisasi').textContent = homeData.cardRegisterAplikasi.realisasi || 0;
+            document.getElementById('app-pending').textContent = homeData.cardRegisterAplikasi.pending || 0;
+            document.getElementById('app-batal').textContent = homeData.cardRegisterAplikasi.batal || 0;
             
-            const card2 = homeData.cardPengirimanPolis;
-            document.getElementById('ship-total').textContent = card2.total || 0;
-            document.getElementById('ship-terkirim').textContent = card2.terkirim || 0;
-            document.getElementById('ship-perjalanan').textContent = card2.dalamPerjalanan || 0;
-            document.getElementById('ship-return').textContent = card2.return || 0;
+            document.getElementById('ship-total').textContent = homeData.cardPengirimanPolis.total || 0;
+            document.getElementById('ship-terkirim').textContent = homeData.cardPengirimanPolis.terkirim || 0;
+            document.getElementById('ship-perjalanan').textContent = homeData.cardPengirimanPolis.dalamPerjalanan || 0;
+            document.getElementById('ship-return').textContent = homeData.cardPengirimanPolis.return || 0;
 
-            const card3 = homeData.cardRegisterKlaim;
-            document.getElementById('claim-total').textContent = card3.total || 0;
-            document.getElementById('claim-selesai').textContent = card3.selesai || 0;
-            document.getElementById('claim-proses').textContent = card3.onProses || 0;
-            document.getElementById('claim-ditolak').textContent = card3.ditolak || 0;
+            document.getElementById('claim-total').textContent = homeData.cardRegisterKlaim.total || 0;
+            document.getElementById('claim-selesai').textContent = homeData.cardRegisterKlaim.selesai || 0;
+            document.getElementById('claim-proses').textContent = homeData.cardRegisterKlaim.onProses || 0;
+            document.getElementById('claim-ditolak').textContent = homeData.cardRegisterKlaim.ditolak || 0;
 
-            const card4 = homeData.cardMarketingPlan;
-            document.getElementById('plan-total').textContent = card4.total || 0;
-            document.getElementById('plan-realisasi').textContent = card4.realisasi || 0;
-            document.getElementById('plan-proses').textContent = card4.onProses || 0;
-            document.getElementById('plan-draft').textContent = card4.draft || 0;
-            document.getElementById('plan-batal').textContent = card4.batal || 0;
+            document.getElementById('plan-total').textContent = homeData.cardMarketingPlan.total || 0;
+            document.getElementById('plan-realisasi').textContent = homeData.cardMarketingPlan.realisasi || 0;
+            document.getElementById('plan-proses').textContent = homeData.cardMarketingPlan.onProses || 0;
+            document.getElementById('plan-draft').textContent = homeData.cardMarketingPlan.draft || 0;
+            document.getElementById('plan-batal').textContent = homeData.cardMarketingPlan.batal || 0;
         }
 
         function fillTopLists(homeData) {
-            const top5RequestList = document.getElementById('top5-request-list');
-            top5RequestList.innerHTML = '';
+            const top5List = document.getElementById('top5-request-list');
+            top5List.innerHTML = '';
             if (homeData.top5RequestName && homeData.top5RequestName.length > 0) {
                 homeData.top5RequestName.forEach(item => {
-                    top5RequestList.innerHTML += `<li><span class="list-name">${item.name}</span> <span class="list-count">${item.count}</span></li>`;
+                    top5List.innerHTML += `<li><span class="list-name">${item.name}</span> <span class="list-count">${item.count}</span></li>`;
                 });
             } else {
-                top5RequestList.innerHTML = '<li>Tidak ada data.</li>';
+                top5List.innerHTML = '<li>Tidak ada data.</li>';
             }
             
-            const top4MarketingList = document.getElementById('top4-marketing-list');
-            top4MarketingList.innerHTML = '';
+            const top4List = document.getElementById('top4-marketing-list');
+            top4List.innerHTML = '';
             if (homeData.top4Marketing && homeData.top4Marketing.length > 0) {
                 homeData.top4Marketing.forEach(item => {
-                    top4MarketingList.innerHTML += `<li><span class="list-name">${item.name}</span> <span class="list-count">${item.count} Aplikasi</span></li>`;
+                    top4List.innerHTML += `<li><span class="list-name">${item.name}</span> <span class="list-count">${item.count} Aplikasi</span></li>`;
                 });
             } else {
-                top4MarketingList.innerHTML = '<li>Tidak ada data.</li>';
+                top4List.innerHTML = '<li>Tidak ada data.</li>';
             }
         }
 
@@ -364,8 +286,7 @@
                 plugins: {
                     legend: { display: false },
                     datalabels: {
-                        anchor: 'end',
-                        align: 'top',
+                        anchor: 'end', align: 'top',
                         color: getComputedStyle(document.body).getPropertyValue('--text-primary'),
                         font: { weight: 'bold' }
                     }
@@ -376,28 +297,17 @@
                 }
             };
 
-            const appChartData = homeData.appChart;
-            const ctxApp = document.getElementById('appChart').getContext('2d');
             if(window.myAppChart) window.myAppChart.destroy();
-            window.myAppChart = new Chart(ctxApp, {
-                type: 'bar',
-                data: appChartData,
-                options: chartOptions,
-                plugins: [ChartDataLabels]
+            window.myAppChart = new Chart(document.getElementById('appChart').getContext('2d'), {
+                type: 'bar', data: homeData.appChart, options: chartOptions, plugins: [ChartDataLabels]
             });
 
-            const planChartData = homeData.planChart;
-            const ctxPlan = document.getElementById('planChart').getContext('2d');
             if(window.myPlanChart) window.myPlanChart.destroy();
-            window.myPlanChart = new Chart(ctxPlan, {
-                type: 'bar',
-                data: planChartData,
-                options: chartOptions,
-                plugins: [ChartDataLabels]
+            window.myPlanChart = new Chart(document.getElementById('planChart').getContext('2d'), {
+                type: 'bar', data: homeData.planChart, options: chartOptions, plugins: [ChartDataLabels]
             });
         }
        
-        // --- Event Listener Lainnya ---
         logoutButton.addEventListener('click', e => { e.preventDefault(); sessionStorage.removeItem('loggedInUser'); window.location.replace('index.html'); });
         themeCheckbox.addEventListener('change', function() { if (this.checked) { document.body.classList.replace('light-mode', 'dark-mode'); localStorage.setItem('theme', 'dark'); } else { document.body.classList.replace('dark-mode', 'light-mode'); localStorage.setItem('theme', 'light'); } });
         hamburgerButton.addEventListener('click', () => { sidebar.classList.add('show'); overlay.classList.add('show'); });
@@ -405,14 +315,11 @@
         overlay.addEventListener('click', closeSidebar);
         document.querySelector('.sidebar').addEventListener('click', e => {
             const navItem = e.target.closest('.nav-item');
-            if (window.innerWidth <= 992 && navItem) {
-                if (!navItem.id && !navItem.closest('.theme-switch-wrapper')) {
-                    closeSidebar();
-                }
+            if (window.innerWidth <= 992 && navItem && !navItem.id && !navItem.closest('.theme-switch-wrapper')) {
+                closeSidebar();
             }
         });
     
     </script>
 </body>
 </html>
-
