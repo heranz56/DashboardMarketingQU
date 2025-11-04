@@ -148,13 +148,16 @@
                     </div>
                     
                     <!-- Kolom Kanan: Grafik -->
-                    <div class="card chart-card">
-                        <div class="card-header">
-                            <h3>Performa Marketing</h3>
+                     <div class="card-column" style="grid-column: span 2;">
+                        <!-- Grafik 1: Aplikasi vs Marketing -->
+                        <div class="card chart-card">
+                            <div class="card-header"><h3>Aplikasi per Marketing</h3></div>
+                            <div class="card-body"><canvas id="appChart"></canvas></div>
                         </div>
-                        <div class="card-body">
-                            <!-- Di sinilah grafik akan dirender oleh Chart.js -->
-                            <canvas id="marketingChart"></canvas>
+                        <!-- Grafik 2: Plan vs Marketing -->
+                        <div class="card chart-card">
+                            <div class="card-header"><h3>Plan per Marketing</h3></div>
+                            <div class="card-body"><canvas id="planChart"></canvas></div>
                         </div>
                     </div>
                 </div>
@@ -340,6 +343,7 @@
     </script>
 </body>
 </html>
+
 
 
 
