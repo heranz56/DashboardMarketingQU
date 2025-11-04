@@ -46,59 +46,36 @@
         let currentUser;
 
         // --- Fungsi Utama ---
-        window.onload = () => {
-            const userDataString = sessionStorage.getItem('loggedInUser');
-            if (!userDataString) {
-                return void window.location.replace('index.html');
-            }
-            try {
-                currentUser = JSON.parse(userDataString);
-                userNameEl.textContent = currentUser.nama_lengkap;
-                loadInitialData(currentUser.id_role);
-            } catch (e) {
-                console.error("Data sesi rusak:", e);
-                sessionStorage.removeItem('loggedInUser');
-                window.location.replace('index.html');
-            }
-            const currentTheme = localStorage.getItem('theme');
-            if (currentTheme === 'dark') {
-                document.body.classList.replace('light-mode', 'dark-mode');
-                themeCheckbox.checked = true;
-            }
-        };
+       window.onload = () => {
+        const userDataString = sessionStorage.getItem('loggedInUser');
+        if (!userDataString) return void window.location.replace('index.html');
+        try {
+            currentUser = JSON.parse(userDataString);
+            userNameEl.textContent = currentUser.nama_lengkap;
+            loadInitialDashboard(currentUser.id_role);
+        } catch (e) { /* ... (penanganan error sesi) ... */ }
+        // ... (logika dark mode)
+    };
 
-        function loadInitialData(roleId) {
-            fetch(`${webAppUrl}?action=getInitialDashboardLoad&role_id=${roleId}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status !== 'success') {
-                        throw new Error('Gagal memuat data awal.');
-                    }
-                    sidebarNav.innerHTML = data.sidebarHtml;
-                    setupMenuNavigation();
-                    dashboardContent.innerHTML = data.homePageHtml;
-                    initHomePage(data.homePageData); // Kirim data langsung
-                })
-                .catch(err => {
-                    console.error(err);
-                    sidebarNav.innerHTML = `<p style="color: red;">Error koneksi.</p>`;
-                    dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat dashboard.</p>`;
-                });
-        }
-        
-        function setupMenuNavigation() {
-            sidebarNav.addEventListener('click', e => {
-                const navItem = e.target.closest('.nav-item');
-                if (!navItem || !navItem.dataset.page) return;
-                e.preventDefault();
-                document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
-                navItem.classList.add('active');
-                document.querySelector('.header-title').textContent = navItem.querySelector('span').textContent;
-                loadPageContent(navItem.dataset.page);
+        function loadInitialDashboard(roleId) {
+        fetch(`${webAppUrl}?action=getInitialDashboardLoad&role_id=${roleId}`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.status !== 'success') throw new Error('Gagal memuat data awal.');
+                
+                sidebarNav.innerHTML = data.sidebarHtml;
+                dashboardContent.innerHTML = data.homePageHtml;
+                
+                setupMenuNavigation();
+                initHomePage(data.homePageData);
+            })
+            .catch(err => {
+                sidebarNav.innerHTML = `<p style="color: red;">Error.</p>`;
+                dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat dashboard.</p>`;
             });
-        }
+    }
 
-        function loadPageContent(pageName) {
+         function loadPageContent(pageName) {
             dashboardContent.innerHTML = '<div class="card"><div class="card-body"><p>Memuat halaman...</p></div></div>';
             
             // Jika halaman utama, kita hanya perlu refresh datanya
@@ -126,6 +103,18 @@
                 }).catch(err => {
                     dashboardContent.innerHTML = `<p style="color: red;">Error koneksi halaman.</p>`;
                 });
+        }
+        
+        function setupMenuNavigation() {
+            sidebarNav.addEventListener('click', e => {
+                const navItem = e.target.closest('.nav-item');
+                if (!navItem || !navItem.dataset.page) return;
+                e.preventDefault();
+                document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
+                navItem.classList.add('active');
+                document.querySelector('.header-title').textContent = navItem.querySelector('span').textContent;
+                loadPageContent(navItem.dataset.page);
+            });
         }
         
         // [DIKEMBALIKAN] Fungsi untuk menginisialisasi Halaman Utama
@@ -299,4 +288,5 @@
     </script>
 </body>
 </html>
+
 
