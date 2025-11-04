@@ -168,6 +168,24 @@
             }
         };
 
+        function setupMenuNavigation() {
+            sidebarNav.addEventListener('click', (e) => {
+                const navItem = e.target.closest('.nav-item');
+                if (!navItem || !navItem.querySelector('span')) return;
+                
+                e.preventDefault();
+                const pageName = navItem.dataset.page;
+                
+                document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
+                navItem.classList.add('active');
+                document.querySelector('.header-title').textContent = navItem.querySelector('span').textContent;
+                
+                if (pageName) {
+                    loadPageContent(pageName);
+                }
+            });
+        }
+
         /**
          * Fungsi utama untuk memuat semua data dashboard.
          */
@@ -317,4 +335,5 @@
     </script>
 </body>
 </html>
+
 
