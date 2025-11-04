@@ -216,9 +216,62 @@
                 }
             });
         });
+function loadDashboardContent(roleId) {
+            // Kita tetap memanggil getDashboardData untuk mendapatkan menu
+            fetch(`${webAppUrl}?action=getDashboardData&role_id=${roleId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        sidebarNav.innerHTML = data.sidebarHtml;
+                    }
+                });
+
+            // [BARU] Panggilan terpisah untuk mendapatkan data halaman utama
+            fetch(`${webAppUrl}?action=getHomePageData`)
+                .then(res => res.json())
+                .then(result => {
+                    if (result.status === 'success') {
+                        const homeData = result.data;
+                        
+                        // Isi Card 1: Register Aplikasi
+                        const card1 = homeData.cardRegisterAplikasi;
+                        document.getElementById('app-total').textContent = card1.total || 0;
+                        document.getElementById('app-realisasi').textContent = card1.realisasi || 0;
+                        document.getElementById('app-pending').textContent = card1.pending || 0;
+                        document.getElementById('app-batal').textContent = card1.batal || 0;
+                        
+                        // Isi Card 2: Pengiriman Polis
+                        const card2 = homeData.cardPengirimanPolis;
+                        document.getElementById('ship-total').textContent = card2.total || 0;
+                        document.getElementById('ship-terkirim').textContent = card2.terkirim || 0;
+                        document.getElementById('ship-perjalanan').textContent = card2.dalamPerjalanan || 0;
+                        document.getElementById('ship-return').textContent = card2.return || 0;
+
+                        // Isi Card 3: Register Klaim
+                        const card3 = homeData.cardRegisterKlaim;
+                        document.getElementById('claim-total').textContent = card3.total || 0;
+                        document.getElementById('claim-selesai').textContent = card3.selesai || 0;
+                        document.getElementById('claim-proses').textContent = card3.onProses || 0;
+                        document.getElementById('claim-ditolak').textContent = card3.ditolak || 0;
+
+                        // Isi Card 4: Marketing Plan
+                        const card4 = homeData.cardMarketingPlan;
+                        document.getElementById('plan-total').textContent = card4.total || 0;
+                        document.getElementById('plan-realisasi').textContent = card4.realisasi || 0;
+                        document.getElementById('plan-proses').textContent = card4.onProses || 0;
+                        document.getElementById('plan-draft').textContent = card4.draft || 0;
+                        document.getElementById('plan-batal').textContent = card4.batal || 0;
+                    }
+                })
+                .catch(err => {
+                    console.error("Gagal memuat data kartu:", err);
+                });
+        }
+    
     </script>
 </body>
 </html>
+
 
 
 
