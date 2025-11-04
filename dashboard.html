@@ -17,10 +17,16 @@
             <div class="sidebar-header"><i class="fa-solid fa-chart-line"></i><span class="logo-text">Dashboard</span></div>
             <nav class="sidebar-nav"><p style="padding: 20px; color: var(--text-secondary);">Memuat menu...</p></nav>
             <div class="sidebar-footer">
-                <div class="theme-switch-wrapper"><label class="theme-switch" for="theme-checkbox"><input type="checkbox" id="theme-checkbox" /><div class="slider round"></div></label></div>
+                <div class="theme-switch-wrapper">
+                    <label class="theme-switch" for="theme-checkbox">
+                        <input type="checkbox" id="theme-checkbox" />
+                        <div class="slider round"></div>
+                    </label>
+                </div>
                 <a href="#" id="logout-button" class="nav-item"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
             </div>
         </aside>
+
         <div class="main-content">
             <header class="header">
                 <div class="header-left"><button id="hamburger-button" class="hamburger-btn"><i class="fa-solid fa-bars"></i></button><h1 class="header-title">Halaman Utama</h1></div>
@@ -47,11 +53,13 @@
         // --- Fungsi Utama ---
         window.onload = () => {
             const userDataString = sessionStorage.getItem('loggedInUser');
-            if (!userDataString) return void window.location.replace('index.html');
+            if (!userDataString) {
+                return void window.location.replace('index.html');
+            }
             try {
                 currentUser = JSON.parse(userDataString);
                 userNameEl.textContent = currentUser.nama_lengkap;
-                loadInitialDashboard(currentUser.id_role);
+                loadInitialData(currentUser.id_role);
             } catch (e) {
                 console.error("Data sesi rusak:", e);
                 sessionStorage.removeItem('loggedInUser');
@@ -64,7 +72,7 @@
             }
         };
 
-        function loadInitialDashboard(roleId) {
+        function loadInitialData(roleId) {
             fetch(`${webAppUrl}?action=getInitialDashboardLoad&role_id=${roleId}`)
                 .then(res => res.json())
                 .then(data => {
@@ -98,7 +106,7 @@
         }
 
         function loadPageContent(pageName) {
-            dashboardContent.innerHTML = '<div class="card"><div class="card-body"><p>Memuat halaman...</p></div></div>`;
+            dashboardContent.innerHTML = '<div class="card"><div class="card-body"><p>Memuat halaman...</p></div></div>';
             
             fetch(`${webAppUrl}?action=getPageContent&page=${pageName}`)
                 .then(res => res.json())
@@ -106,9 +114,9 @@
                     if (data.status === 'success') {
                         dashboardContent.innerHTML = data.htmlContent;
                         if (pageName === 'halamanUtama') {
-                            initHomePage(data.pageData);
+                            initHomePage();
                         } else if (pageName === 'registerAplikasi') {
-                            initRegisterAplikasiPage(data.pageData);
+                            initRegisterAplikasiPage();
                         }
                     } else {
                         dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat halaman.</p>`;
@@ -124,7 +132,6 @@
                 fillTopLists(pageData);
                 renderCharts(pageData);
             } else {
-                // Refresh data untuk halaman utama
                 fetch(`${webAppUrl}?action=getHomePageData`)
                     .then(res => res.json())
                     .then(result => {
@@ -138,11 +145,11 @@
             }
         }
         
-        function initRegisterAplikasiPage(pageData) {
+        function initRegisterAplikasiPage() {
             const searchInput = document.getElementById('search-input');
             const tableBody = document.querySelector('#data-table tbody');
             const tableHead = document.querySelector('#data-table thead');
-            let allData = pageData.data || [];
+            let allData = [];
 
             function renderTable(dataToRender, headers) {
                 tableBody.innerHTML = '';
@@ -161,12 +168,22 @@
                 });
             }
 
-            const headers = pageData.headers;
-            tableHead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
-            renderTable(allData.reverse(), headers);
+            fetch(`${webAppUrl}?action=getDataRegister`)
+                .then(res => res.json())
+                .then(result => {
+                    if (result.status === 'success') {
+                        allData = result.data.reverse();
+                        const headers = result.headers;
+                        tableHead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+                        renderTable(allData, headers);
+                    } else {
+                        tableBody.innerHTML = `<tr><td colspan="100%" style="color:red;">Gagal memuat data tabel.</td></tr>`;
+                    }
+                });
 
             searchInput.addEventListener('input', () => {
                 const searchTerm = searchInput.value.toLowerCase();
+                const headers = Array.from(tableHead.querySelectorAll('th')).map(th => th.textContent);
                 const filteredData = allData.filter(row => Object.values(row).some(val => String(val).toLowerCase().includes(searchTerm)));
                 renderTable(filteredData, headers);
             });
