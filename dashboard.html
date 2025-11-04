@@ -132,7 +132,7 @@
         <div class="overlay"></div>
     </div>
 
-    <script>
+<script>
         // --- Elemen UI ---
         const userNameEl = document.getElementById('user-name');
         const sidebarNav = document.querySelector('.sidebar-nav');
@@ -144,37 +144,38 @@
         const overlay = document.querySelector('.overlay');
         
         const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
+        let currentUser;
 
-        // --- Fungsi yang berjalan saat halaman dimuat ---
+        // --- Fungsi Utama yang Berjalan Saat Halaman Dimuat ---
         window.onload = () => {
             const userDataString = sessionStorage.getItem('loggedInUser');
             if (!userDataString) {
-                window.location.replace('index.html');
-                return; 
+                return void window.location.replace('index.html');
             }
             try {
-                const user = JSON.parse(userDataString);
-                userNameEl.textContent = user.nama_lengkap;
-                loadDashboardData(user.id_role);
-                initHomePage(); // Langsung panggil fungsi untuk memuat konten utama
-            } catch (error) {
-                console.error("Data sesi rusak:", error);
+                currentUser = JSON.parse(userDataString);
+                userNameEl.textContent = currentUser.nama_lengkap;
+                loadInitialDashboard();
+            } catch (e) {
+                console.error("Data sesi rusak:", e);
                 sessionStorage.removeItem('loggedInUser');
                 window.location.replace('index.html');
             }
             const currentTheme = localStorage.getItem('theme');
-            if (currentTheme === 'dark') {
+            if ("dark" === currentTheme) {
                 document.body.classList.replace('light-mode', 'dark-mode');
                 themeCheckbox.checked = true;
             }
         };
 
-        function loadDashboardData(roleId) {
-            fetch(`${webAppUrl}?action=getDashboardData&role_id=${roleId}`)
+        function loadInitialDashboard() {
+            fetch(`${webAppUrl}?action=getDashboardData&role_id=${currentUser.id_role}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.status === 'success') {
                         sidebarNav.innerHTML = data.sidebarHtml;
+                        setupMenuNavigation();
+                        loadPageContent('halamanUtama');
                     } else {
                         sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Gagal memuat menu.</p>`;
                     }
@@ -183,25 +184,130 @@
                 });
         }
 
+        function setupMenuNavigation() {
+            sidebarNav.addEventListener('click', e => {
+                const navItem = e.target.closest('.nav-item');
+                if (!navItem || !navItem.dataset.page) return;
+                e.preventDefault();
+                const pageName = navItem.dataset.page;
+                
+                document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
+                navItem.classList.add('active');
+                document.querySelector('.header-title').textContent = navItem.querySelector('span').textContent;
+                
+                loadPageContent(pageName);
+            });
+        }
+
+        function loadPageContent(pageName) {
+            dashboardContent.innerHTML = `<div class="card"><div class="card-body" style="text-align: center;"><p>Memuat halaman...</p></div></div>`;
+            fetch(`${webAppUrl}?action=getPageContent&page=${pageName}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        dashboardContent.innerHTML = data.htmlContent;
+                        if (pageName === 'halamanUtama') {
+                            initHomePage();
+                        } else if (pageName === 'registerAplikasi') {
+                            initRegisterAplikasiPage();
+                        }
+                    } else {
+                        dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat halaman.</p>`;
+                    }
+                }).catch(err => {
+                    dashboardContent.innerHTML = `<p style="color: red;">Error koneksi halaman.</p>`;
+                });
+        }
+        
+        // --- Fungsi-fungsi Inisialisasi Halaman ---
         function initHomePage() {
             fetch(`${webAppUrl}?action=getHomePageData`)
                 .then(res => res.json())
                 .then(result => {
                     if (result.status !== 'success') {
-                        throw new Error(result.message || 'Data konten tidak valid');
+                        console.error("Gagal ambil data home");
+                        return;
                     }
-                    const homeData = result.data;
-                    fillSummaryCards(homeData);
-                    fillTopLists(homeData);
-                    renderCharts(homeData);
-                })
-                .catch(err => {
+                    fillSummaryCards(result.data);
+                    fillTopLists(result.data);
+                    renderCharts(result.data);
+                }).catch(err => {
                     console.error("Gagal memuat data konten:", err);
-                    dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat konten dashboard. Silakan refresh halaman.</p>`;
                 });
         }
         
-        // --- Fungsi-fungsi Pembantu ---
+        function initRegisterAplikasiPage() {
+            const searchInput = document.getElementById('search-input');
+            const tableBody = document.querySelector('#data-table tbody');
+            const tableHead = document.querySelector('#data-table thead');
+            let allData = [];
+
+            function renderTable(dataToRender, headers) {
+                tableBody.innerHTML = '';
+                if (dataToRender.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="${headers.length}" style="text-align:center; padding: 20px;">Data tidak ditemukan.</td></tr>`;
+                    return;
+                }
+                dataToRender.forEach(row => {
+                    const tr = document.createElement('tr');
+                    let rowHtml = '';
+                    headers.forEach(header => {
+                        rowHtml += `<td>${row[header] || ''}</td>`;
+                    });
+                    tr.innerHTML = rowHtml;
+                    tableBody.appendChild(tr);
+                });
+            }
+
+            fetch(`${webAppUrl}?action=getDataRegister`)
+                .then(res => res.json())
+                .then(result => {
+                    if (result.status === 'success') {
+                        allData = result.data.reverse();
+                        const headers = result.headers;
+                        tableHead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+                        renderTable(allData, headers);
+                    } else {
+                        tableBody.innerHTML = `<tr><td colspan="100%" style="color:red;">Gagal memuat data tabel.</td></tr>`;
+                    }
+                });
+
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const headers = Array.from(tableHead.querySelectorAll('th')).map(th => th.textContent);
+                const filteredData = allData.filter(row => Object.values(row).some(val => String(val).toLowerCase().includes(searchTerm)));
+                renderTable(filteredData, headers);
+            });
+
+            const modal = document.getElementById('add-modal');
+            document.getElementById('add-register-btn').onclick = () => modal.style.display = "block";
+            document.querySelector('.close-modal').onclick = () => modal.style.display = "none";
+            window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
+        }
+        
+        dashboardContent.addEventListener('submit', e => {
+            if (e.target.id === 'form-register-aplikasi') {
+                e.preventDefault();
+                const form = e.target;
+                const submitButton = form.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+
+                fetch(webAppUrl, { method: "POST", body: new FormData(form) })
+                    .then(res => res.json())
+                    .then(data => {
+                        Toastify({ text: data.message, style: { background: data.status === 'success' ? 'green' : 'red' } }).showToast();
+                        if (data.status === 'success') {
+                            form.reset();
+                            document.getElementById('add-modal').style.display = "none";
+                            loadPageContent('registerAplikasi');
+                        }
+                    })
+                    .catch(err => Toastify({ text: "Error koneksi.", style: { background: 'red' } }).showToast())
+                    .finally(() => submitButton.disabled = false);
+            }
+        });
+
+        // --- Fungsi Pembantu untuk Mengisi Data Halaman Utama ---
         function fillSummaryCards(homeData) {
             const card1 = homeData.cardRegisterAplikasi;
             document.getElementById('app-total').textContent = card1.total || 0;
@@ -291,9 +397,9 @@
             });
         }
        
-        // --- Sisa fungsi (logout, dark mode, hamburger) ---
-        logoutButton.addEventListener('click', (e) => { e.preventDefault(); sessionStorage.removeItem('loggedInUser'); window.location.replace('index.html'); });
-        themeCheckbox.addEventListener('change', function() { if(this.checked) { document.body.classList.replace('light-mode', 'dark-mode'); localStorage.setItem('theme', 'dark'); } else { document.body.classList.replace('dark-mode', 'light-mode'); localStorage.setItem('theme', 'light'); } });
+        // --- Event Listener Lainnya ---
+        logoutButton.addEventListener('click', e => { e.preventDefault(); sessionStorage.removeItem('loggedInUser'); window.location.replace('index.html'); });
+        themeCheckbox.addEventListener('change', function() { if (this.checked) { document.body.classList.replace('light-mode', 'dark-mode'); localStorage.setItem('theme', 'dark'); } else { document.body.classList.replace('dark-mode', 'light-mode'); localStorage.setItem('theme', 'light'); } });
         hamburgerButton.addEventListener('click', () => { sidebar.classList.add('show'); overlay.classList.add('show'); });
         function closeSidebar() { sidebar.classList.remove('show'); overlay.classList.remove('show'); }
         overlay.addEventListener('click', closeSidebar);
@@ -309,3 +415,4 @@
     </script>
 </body>
 </html>
+
