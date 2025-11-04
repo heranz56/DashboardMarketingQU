@@ -323,18 +323,33 @@ input:checked + .slider:before { transform: translateX(20px); }
 }
 
 /* Gaya untuk Halaman Tabel */
-.full-height-card { display: flex; flex-direction: column; height: calc(100vh - 110px); }
-.header-actions { display: flex; gap: 15px; align-items: center; }
-.search-box {
-    padding: 8px 12px; border-radius: 6px; border: 1px solid var(--border);
-    background-color: var(--bg); color: var(--text-primary); width: 250px;
+.full-height-card {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - var(--header-height) - 60px); /* Tinggi penuh dikurangi header & padding */
 }
+
+.header-actions { display: flex; gap: 15px; align-items: center; }
+
+.search-box {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background-color: var(--bg);
+    color: var(--text-primary);
+    width: 250px;
+}
+
 .table-container { flex-grow: 1; overflow: auto; }
 #data-table { width: 100%; border-collapse: collapse; }
 #data-table th, #data-table td {
-    padding: 12px 15px; border-bottom: 1px solid var(--border);
-    text-align: left; font-size: 14px;
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    font-size: 14px;
+    white-space: nowrap; /* Mencegah teks turun baris */
 }
+
 #data-table thead { position: sticky; top: 0; background-color: var(--surface); }
 #data-table th { font-weight: 600; color: var(--text-secondary); }
 #data-table tbody tr:hover { background-color: var(--bg); }
@@ -349,7 +364,54 @@ input:checked + .slider:before { transform: translateX(20px); }
     border: 1px solid var(--border); width: 80%; max-width: 700px;
     border-radius: 12px;
 }
-.modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; }
-.modal-header h4 { font-size: 18px; }
-.close-modal { color: var(--text-secondary); font-size: 28px; font-weight: bold; cursor: pointer; }
+.modal-header { display: flex; justify-content: space-between; align-items: center; 
+               border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; }
+
+.modal-header h4 {
+    font-size: 18px;
+    margin: 0;
+}
+
+.close-modal {
+    color: var(--text-secondary);
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
 .close-modal:hover { color: var(--text-primary); }
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-grid .input-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-grid label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+}
+
+.form-grid input, .form-grid select, .form-grid textarea {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background-color: var(--bg);
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.form-actions {
+    margin-top: 30px;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
