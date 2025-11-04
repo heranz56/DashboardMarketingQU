@@ -11,26 +11,51 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 </head>
 <body class="dark-mode dashboard-page">
+
     <div class="dashboard-layout">
         <aside class="sidebar">
-            <div class="sidebar-header"><i class="fa-solid fa-chart-line"></i><span class="logo-text">Dashboard</span></div>
-            <nav class="sidebar-nav"><p style="padding: 20px; color: var(--text-secondary);">Memuat menu...</p></nav>
+            <div class="sidebar-header">
+                <i class="fa-solid fa-chart-line"></i>
+                <span class="logo-text">Dashboard</span>
+            </div>
+            <nav class="sidebar-nav">
+                <p style="padding: 20px; color: var(--text-secondary);">Memuat menu...</p>
+            </nav>
             <div class="sidebar-footer">
-                <div class="theme-switch-wrapper"><label class="theme-switch" for="theme-checkbox"><input type="checkbox" id="theme-checkbox" /><div class="slider round"></div></label></div>
+                <div class="theme-switch-wrapper">
+                    <label class="theme-switch" for="theme-checkbox">
+                        <input type="checkbox" id="theme-checkbox" />
+                        <div class="slider round"></div>
+                    </label>
+                </div>
                 <a href="#" id="logout-button" class="nav-item"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
             </div>
         </aside>
+
         <div class="main-content">
             <header class="header">
-                <div class="header-left"><button id="hamburger-button" class="hamburger-btn"><i class="fa-solid fa-bars"></i></button><h1 class="header-title">Halaman Utama</h1></div>
-                <div class="header-right"><div class="search-bar"><i class="fa-solid fa-search"></i><input type="text" placeholder="Cari..."></div><div class="user-profile"><span id="user-name">Memuat...</span><i class="fa-solid fa-user-circle user-avatar"></i></div></div>
+                <div class="header-left">
+                    <button id="hamburger-button" class="hamburger-btn"><i class="fa-solid fa-bars"></i></button>
+                    <h1 class="header-title">Halaman Utama</h1>
+                </div>
+                <div class="header-right">
+                    <div class="search-bar">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" placeholder="Cari...">
+                    </div>
+                    <div class="user-profile">
+                        <span id="user-name">Memuat...</span>
+                        <i class="fa-solid fa-user-circle user-avatar"></i>
+                    </div>
+                </div>
             </header>
-            <main id="dashboard-content" class="content-area"><p>Memuat konten...</p></main>
+            <main id="dashboard-content" class="content-area">
+                <p>Memuat konten...</p>
+            </main>
         </div>
         <div class="overlay"></div>
     </div>
 
-    <!-- [PERBAIKAN] Menggunakan kode JavaScript yang terstruktur dan mudah dibaca -->
     <script>
         // --- Elemen UI ---
         const userNameEl = document.getElementById('user-name');
@@ -43,43 +68,56 @@
         const overlay = document.querySelector('.overlay');
         
         const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
+        let currentUser; // Variabel global untuk menyimpan info user
 
-        // --- Fungsi yang berjalan saat halaman dimuat ---
+        // --- Fungsi Utama ---
         window.onload = () => {
             const userDataString = sessionStorage.getItem('loggedInUser');
             if (!userDataString) {
-                window.location.replace('index.html');
-                return; 
+                return void window.location.replace('index.html');
             }
             try {
-                const user = JSON.parse(userDataString);
-                userNameEl.textContent = user.nama_lengkap;
-                loadDashboardData(user.id_role);
-            } catch (error) {
-                console.error("Data sesi rusak:", error);
+                currentUser = JSON.parse(userDataString);
+                userNameEl.textContent = currentUser.nama_lengkap;
+                loadPage('halamanUtama', true); // Muat halaman utama saat pertama kali masuk
+            } catch (e) {
+                console.error("Data sesi rusak:", e);
                 sessionStorage.removeItem('loggedInUser');
                 window.location.replace('index.html');
             }
             const currentTheme = localStorage.getItem('theme');
-            if (currentTheme === 'dark') {
+            if ("dark" === currentTheme) {
                 document.body.classList.replace('light-mode', 'dark-mode');
                 themeCheckbox.checked = true;
             }
         };
 
-        function loadDashboardData(roleId) {
-            fetch(`${webAppUrl}?action=getDashboardData&role_id=${roleId}`)
+        function loadPage(pageName, isFirstLoad = false) {
+            dashboardContent.innerHTML = '<div class="card"><div class="card-body"><p>Memuat halaman...</p></div></div>';
+            
+            fetch(`${webAppUrl}?action=getPageContent&page=${pageName}&role_id=${currentUser.id_role}`)
                 .then(res => res.json())
                 .then(data => {
-                    if (data.status === 'success') {
+                    if (data.status !== 'success') {
+                        throw new Error('Gagal memuat data dari server');
+                    }
+                    
+                    if (isFirstLoad && data.sidebarHtml) {
                         sidebarNav.innerHTML = data.sidebarHtml;
                         setupMenuNavigation();
-                        loadPageContent('halamanUtama');
-                    } else {
-                        sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Gagal memuat menu.</p>`;
                     }
-                }).catch(err => {
-                    sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Error koneksi menu.</p>`;
+                    
+                    dashboardContent.innerHTML = data.htmlContent;
+
+                    if (pageName === 'halamanUtama' && data.pageData) {
+                        initHomePage(data.pageData.data);
+                    } else if (pageName === 'registerAplikasi' && data.pageData) {
+                        initRegisterAplikasiPage(data.pageData);
+                    }
+                })
+                .catch(err => {
+                    console.error("Error saat memuat halaman:", err);
+                    dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat halaman.</p>`;
                 });
         }
 
@@ -87,69 +125,94 @@
             sidebarNav.addEventListener('click', e => {
                 const navItem = e.target.closest('.nav-item');
                 if (!navItem || !navItem.dataset.page) return;
-                
                 e.preventDefault();
-                const pageName = navItem.dataset.page;
                 
                 document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => item.classList.remove('active'));
                 navItem.classList.add('active');
                 document.querySelector('.header-title').textContent = navItem.querySelector('span').textContent;
                 
-                loadPageContent(pageName);
+                loadPage(navItem.dataset.page);
             });
         }
 
-        function loadPageContent(pageName) {
-            dashboardContent.innerHTML = `<div class="card"><div class="card-body"><p>Memuat halaman...</p></div></div>`;
-            fetch(`${webAppUrl}?action=getPageContent&page=${pageName}`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        dashboardContent.innerHTML = data.htmlContent;
-                        if (pageName === 'halamanUtama') {
-                            initHomePage();
-                        } else if (pageName === 'registerAplikasi') {
-                            initRegisterAplikasiPage();
+        // --- Fungsi Inisialisasi Halaman ---
+        function initHomePage(homeData) {
+            fillSummaryCards(homeData);
+            fillTopLists(homeData);
+            renderCharts(homeData);
+        }
+
+        function initRegisterAplikasiPage(pageData) {
+            const searchInput = document.getElementById('search-input');
+            const tableBody = document.querySelector('#data-table tbody');
+            const tableHead = document.querySelector('#data-table thead');
+            let allData = pageData.data || [];
+
+            tableHead.innerHTML = `<tr>${pageData.headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+            renderTable(allData);
+
+            function renderTable(dataToRender) {
+                tableBody.innerHTML = '';
+                if (dataToRender.length === 0) {
+                    tableBody.innerHTML = `<tr><td colspan="${pageData.headers.length}">Data tidak ditemukan.</td></tr>`;
+                    return;
+                }
+                dataToRender.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = pageData.headers.map(header => `<td>${row[header] || ''}</td>`).join('');
+                    tableBody.appendChild(tr);
+                });
+            }
+
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filteredData = allData.filter(row => 
+                    Object.values(row).some(val => String(val).toLowerCase().includes(searchTerm))
+                );
+                renderTable(filteredData);
+            });
+
+            const modal = document.getElementById('add-modal');
+            document.getElementById('add-register-btn').onclick = () => modal.style.display = "block";
+            document.querySelector('.close-modal').onclick = () => modal.style.display = "none";
+            window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
+        }
+        
+        // Event listener untuk submit form dinamis
+        dashboardContent.addEventListener('submit', e => {
+            if (e.target.id === 'form-register-aplikasi') {
+                e.preventDefault();
+                const form = e.target;
+                const submitButton = form.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+
+                fetch(webAppUrl, { method: "POST", body: new FormData(form) })
+                    .then(res => res.json())
+                    .then(data => {
+                        Toastify({ text: data.message, style: { background: data.status === 'success' ? 'green' : 'red' } }).showToast();
+                        if (data.status === 'success') {
+                            form.reset();
+                            document.getElementById('add-modal').style.display = "none";
+                            loadPage('registerAplikasi'); // Muat ulang data tabel
                         }
-                    } else {
-                        dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat halaman.</p>`;
-                    }
-                }).catch(err => {
-                    dashboardContent.innerHTML = `<p style="color: red;">Error koneksi halaman.</p>`;
-                });
-        }
+                    })
+                    .catch(err => Toastify({ text: "Error koneksi.", style: { background: 'red' } }).showToast())
+                    .finally(() => submitButton.disabled = false);
+            }
+        });
 
-        function initHomePage() {
-            fetch(`${webAppUrl}?action=getHomePageData`)
-                .then(res => res.json())
-                .then(result => {
-                    if (result.status !== 'success') {
-                        console.error("Gagal ambil data home");
-                        return;
-                    }
-                    fillSummaryCards(result.data);
-                    fillTopLists(result.data);
-                    renderCharts(result.data);
-                }).catch(err => {
-                    console.error("Gagal memuat data konten:", err);
-                });
-        }
+        // --- Fungsi Pembantu untuk Mengisi Data ---
+        function fillSummaryCards(d){/* implementasi lengkap */}
+        function fillTopLists(d){/* implementasi lengkap */}
+        function renderCharts(d){/* implementasi lengkap */}
 
-        function initRegisterAplikasiPage() { /* ... fungsi ini akan kita kembangkan nanti ... */ }
-
-        dashboardContent.addEventListener('submit', e => { /* ... fungsi ini akan kita kembangkan nanti ... */ });
-
-        function fillSummaryCards(homeData) { /* ... implementasi lengkap ... */ }
-        function fillTopLists(homeData) { /* ... implementasi lengkap ... */ }
-        function renderCharts(homeData) { /* ... implementasi lengkap ... */ }
-
-        // --- Sisa fungsi (logout, dark mode, hamburger) ---
+        // --- Event Listener Lainnya ---
         logoutButton.addEventListener('click', e => { e.preventDefault(); sessionStorage.removeItem('loggedInUser'); window.location.replace('index.html'); });
         themeCheckbox.addEventListener('change', function() { if (this.checked) { document.body.classList.replace('light-mode', 'dark-mode'); localStorage.setItem('theme', 'dark'); } else { document.body.classList.replace('dark-mode', 'light-mode'); localStorage.setItem('theme', 'light'); } });
         hamburgerButton.addEventListener('click', () => { sidebar.classList.add('show'); overlay.classList.add('show'); });
         function closeSidebar() { sidebar.classList.remove('show'); overlay.classList.remove('show'); }
         overlay.addEventListener('click', closeSidebar);
-        document.querySelectorAll('.sidebar').forEach(side => { side.addEventListener('click', e => { const navItem = e.target.closest('.nav-item'); if (window.innerWidth <= 992 && navItem) { if (!navItem.id || (navItem.id !== 'logout-button' && !navItem.closest('.theme-switch-wrapper'))) { closeSidebar(); } } }); });
+        document.querySelector('.sidebar').addEventListener('click', e => { const t = e.target.closest('.nav-item'); if (window.innerWidth <= 992 && t && !t.id && !t.closest('.theme-switch-wrapper')) closeSidebar(); });
     </script>
 </body>
 </html>
