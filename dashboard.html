@@ -50,12 +50,75 @@
             </header>
 
             <main id="dashboard-content" class="content-area">
-                <p>Memuat konten dashboard...</p>
-            </main>
-        </div>
-        
-        <div class="overlay"></div>
-    </div>
+                <!-- [BARU] Baris untuk Kartu Ringkasan -->
+                <div class="card-row">
+                    <!-- Card 1: Register Aplikasi -->
+                    <div class="card summary-card">
+                        <div class="card-header">
+                            <h3>Total Register Aplikasi</h3>
+                            <i class="fa-solid fa-file-pen card-icon"></i>
+                        </div>
+                        <div class="card-body">
+                            <h1 id="app-total">...</h1>
+                            <div class="sub-stats">
+                                <span><span class="dot green"></span>Realisasi: <strong id="app-realisasi">...</strong></span>
+                                <span><span class="dot yellow"></span>Pending: <strong id="app-pending">...</strong></span>
+                                <span><span class="dot red"></span>Batal: <strong id="app-batal">...</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Pengiriman Polis -->
+                    <div class="card summary-card">
+                        <div class="card-header">
+                            <h3>Total Pengiriman Polis</h3>
+                            <i class="fa-solid fa-truck card-icon"></i>
+                        </div>
+                        <div class="card-body">
+                            <h1 id="ship-total">...</h1>
+                            <div class="sub-stats">
+                                <span><span class="dot green"></span>Terkirim: <strong id="ship-terkirim">...</strong></span>
+                                <span><span class="dot yellow"></span>Perjalanan: <strong id="ship-perjalanan">...</strong></span>
+                                <span><span class="dot red"></span>Return: <strong id="ship-return">...</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3: Register Klaim -->
+                    <div class="card summary-card">
+                        <div class="card-header">
+                            <h3>Total Register Klaim</h3>
+                            <i class="fa-solid fa-hand-holding-dollar card-icon"></i>
+                        </div>
+                        <div class="card-body">
+                            <h1 id="claim-total">...</h1>
+                            <div class="sub-stats">
+                                <span><span class="dot green"></span>Selesai: <strong id="claim-selesai">...</strong></span>
+                                <span><span class="dot yellow"></span>On Proses: <strong id="claim-proses">...</strong></span>
+                                <span><span class="dot red"></span>Ditolak: <strong id="claim-ditolak">...</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Marketing Plan -->
+                    <div class="card summary-card">
+                        <div class="card-header">
+                            <h3>Total Marketing Plan</h3>
+                            <i class="fa-solid fa-bullhorn card-icon"></i>
+                        </div>
+                        <div class="card-body">
+                            <h1 id="plan-total">...</h1>
+                            <div class="sub-stats">
+                                <span><span class="dot green"></span>Realisasi: <strong id="plan-realisasi">...</strong></span>
+                                <span><span class="dot yellow"></span>On Proses: <strong id="plan-proses">...</strong></span>
+                                <span><span class="dot blue"></span>Draft: <strong id="plan-draft">...</strong></span>
+                                <span><span class="dot red"></span>Batal: <strong id="plan-batal">...</strong></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nanti baris untuk Grafik dan Top List akan ditambahkan di sini -->
 
     <script>
         const userNameEl = document.getElementById('user-name');
@@ -154,4 +217,5 @@
     </script>
 </body>
 </html>
+
 
