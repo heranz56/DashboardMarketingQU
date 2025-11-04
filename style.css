@@ -218,3 +218,58 @@ input:checked + .slider:before { transform: translateX(20px); }
     body.dashboard-page .search-bar { display: none; }
     body.dashboard-page .overlay.show { display: block; }
 }
+
+.card-row {
+    display: grid;
+    /* Membuat 4 kolom di desktop, dan 1 kolom di mobile */
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px; /* Jarak antar kartu */
+}
+
+.summary-card .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.summary-card .card-icon {
+    font-size: 20px;
+    color: var(--text-secondary);
+}
+
+.summary-card .card-body h1 {
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 20px;
+}
+
+.summary-card .sub-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Jarak antar sub-statistik */
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.summary-card .sub-stats span {
+    display: flex;
+    align-items: center;
+}
+
+.summary-card .sub-stats strong {
+    color: var(--text-primary);
+    margin-left: 5px;
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.dot.green { background-color: #10B981; }
+.dot.yellow { background-color: #F59E0B; }
+.dot.red { background-color: #EF4444; }
+.dot.blue { background-color: #3B82F6; }
