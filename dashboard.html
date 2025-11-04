@@ -11,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
 </head>
 <body class="dark-mode dashboard-page">
+
     <div class="dashboard-layout">
         <aside class="sidebar">
             <div class="sidebar-header"><i class="fa-solid fa-chart-line"></i><span class="logo-text">Dashboard</span></div>
@@ -20,17 +21,18 @@
                 <a href="#" id="logout-button" class="nav-item"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
             </div>
         </aside>
+
         <div class="main-content">
             <header class="header">
                 <div class="header-left"><button id="hamburger-button" class="hamburger-btn"><i class="fa-solid fa-bars"></i></button><h1 class="header-title">Halaman Utama</h1></div>
                 <div class="header-right"><div class="search-bar"><i class="fa-solid fa-search"></i><input type="text" placeholder="Cari..."></div><div class="user-profile"><span id="user-name">Memuat...</span><i class="fa-solid fa-user-circle user-avatar"></i></div></div>
             </header>
-            <main id="dashboard-content" class="content-area"><p style="text-align: center;">Memuat konten...</p></main>
+            <main id="dashboard-content" class="content-area"><p>Memuat konten...</p></main>
         </div>
         <div class="overlay"></div>
     </div>
 
-   <script>
+    <script>
         // --- Elemen UI ---
         const userNameEl = document.getElementById('user-name');
         const sidebarNav = document.querySelector('.sidebar-nav');
@@ -52,20 +54,20 @@
             try {
                 currentUser = JSON.parse(userDataString);
                 userNameEl.textContent = currentUser.nama_lengkap;
-                loadInitialDashboard(currentUser.id_role);
+                loadInitialData(currentUser.id_role);
             } catch (e) {
                 console.error("Data sesi rusak:", e);
                 sessionStorage.removeItem('loggedInUser');
                 window.location.replace('index.html');
             }
             const currentTheme = localStorage.getItem('theme');
-            if (currentTheme === 'dark') {
+            if ("dark" === currentTheme) {
                 document.body.classList.replace('light-mode', 'dark-mode');
                 themeCheckbox.checked = true;
             }
         };
 
-        function loadInitialDashboard(roleId) {
+        function loadInitialData(roleId) {
             fetch(`${webAppUrl}?action=getInitialDashboardLoad&role_id=${roleId}`)
                 .then(res => res.json())
                 .then(data => {
@@ -99,7 +101,7 @@
         }
 
         function loadPageContent(pageName) {
-            dashboardContent.innerHTML = '<div class="card"><div class="card-body"><p>Memuat halaman...</p></div></div>`;
+            dashboardContent.innerHTML = '<div class="card"><div class="card-body"><p>Memuat halaman...</p></div></div>';
             
             fetch(`${webAppUrl}?action=getPageContent&page=${pageName}`)
                 .then(res => res.json())
@@ -107,7 +109,7 @@
                     if (data.status === 'success') {
                         dashboardContent.innerHTML = data.htmlContent;
                         if (pageName === 'halamanUtama') {
-                            initHomePage(); // Membutuhkan data, jadi panggil getHomePageData
+                            initHomePage();
                         } else if (pageName === 'registerAplikasi') {
                             initRegisterAplikasiPage();
                         }
@@ -119,14 +121,12 @@
                 });
         }
         
-        // [DIKEMBALIKAN] Fungsi untuk menginisialisasi Halaman Utama
         function initHomePage(pageData = null) {
             if (pageData) {
                 fillSummaryCards(pageData);
                 fillTopLists(pageData);
                 renderCharts(pageData);
             } else {
-                // Ini adalah refresh (misal, setelah klik menu Halaman Utama lagi)
                 fetch(`${webAppUrl}?action=getHomePageData`)
                     .then(res => res.json())
                     .then(result => {
@@ -140,7 +140,6 @@
             }
         }
         
-        // [DIKEMBALIKAN] Fungsi untuk menginisialisasi halaman Register Aplikasi
         function initRegisterAplikasiPage() {
             const searchInput = document.getElementById('search-input');
             const tableBody = document.querySelector('#data-table tbody');
@@ -190,35 +189,51 @@
             window.onclick = e => { if (e.target == modal) modal.style.display = "none"; };
         }
 
-        // [DIKEMBALIKAN] Fungsi untuk mengisi kartu ringkasan
+        dashboardContent.addEventListener('submit', e => {
+            if (e.target.id === 'form-register-aplikasi') {
+                e.preventDefault();
+                const form = e.target;
+                const submitButton = form.querySelector('button[type="submit"]');
+                submitButton.disabled = true;
+
+                fetch(webAppUrl, { method: "POST", body: new FormData(form) })
+                    .then(res => res.json())
+                    .then(data => {
+                        Toastify({ text: data.message, style: { background: data.status === 'success' ? 'green' : 'red' } }).showToast();
+                        if (data.status === 'success') {
+                            form.reset();
+                            document.getElementById('add-modal').style.display = "none";
+                            loadPageContent('registerAplikasi');
+                        }
+                    })
+                    .catch(err => Toastify({ text: "Error koneksi.", style: { background: 'red' } }).showToast())
+                    .finally(() => submitButton.disabled = false);
+            }
+        });
+
         function fillSummaryCards(homeData) {
-            const card1 = homeData.cardRegisterAplikasi;
-            document.getElementById('app-total').textContent = card1.total || 0;
-            document.getElementById('app-realisasi').textContent = card1.realisasi || 0;
-            document.getElementById('app-pending').textContent = card1.pending || 0;
-            document.getElementById('app-batal').textContent = card1.batal || 0;
+            document.getElementById('app-total').textContent = homeData.cardRegisterAplikasi.total || 0;
+            document.getElementById('app-realisasi').textContent = homeData.cardRegisterAplikasi.realisasi || 0;
+            document.getElementById('app-pending').textContent = homeData.cardRegisterAplikasi.pending || 0;
+            document.getElementById('app-batal').textContent = homeData.cardRegisterAplikasi.batal || 0;
             
-            const card2 = homeData.cardPengirimanPolis;
-            document.getElementById('ship-total').textContent = card2.total || 0;
-            document.getElementById('ship-terkirim').textContent = card2.terkirim || 0;
-            document.getElementById('ship-perjalanan').textContent = card2.dalamPerjalanan || 0;
-            document.getElementById('ship-return').textContent = card2.return || 0;
+            document.getElementById('ship-total').textContent = homeData.cardPengirimanPolis.total || 0;
+            document.getElementById('ship-terkirim').textContent = homeData.cardPengirimanPolis.terkirim || 0;
+            document.getElementById('ship-perjalanan').textContent = homeData.cardPengirimanPolis.dalamPerjalanan || 0;
+            document.getElementById('ship-return').textContent = homeData.cardPengirimanPolis.return || 0;
 
-            const card3 = homeData.cardRegisterKlaim;
-            document.getElementById('claim-total').textContent = card3.total || 0;
-            document.getElementById('claim-selesai').textContent = card3.selesai || 0;
-            document.getElementById('claim-proses').textContent = card3.onProses || 0;
-            document.getElementById('claim-ditolak').textContent = card3.ditolak || 0;
+            document.getElementById('claim-total').textContent = homeData.cardRegisterKlaim.total || 0;
+            document.getElementById('claim-selesai').textContent = homeData.cardRegisterKlaim.selesai || 0;
+            document.getElementById('claim-proses').textContent = homeData.cardRegisterKlaim.onProses || 0;
+            document.getElementById('claim-ditolak').textContent = homeData.cardRegisterKlaim.ditolak || 0;
 
-            const card4 = homeData.cardMarketingPlan;
-            document.getElementById('plan-total').textContent = card4.total || 0;
-            document.getElementById('plan-realisasi').textContent = card4.realisasi || 0;
-            document.getElementById('plan-proses').textContent = card4.onProses || 0;
-            document.getElementById('plan-draft').textContent = card4.draft || 0;
-            document.getElementById('plan-batal').textContent = card4.batal || 0;
+            document.getElementById('plan-total').textContent = homeData.cardMarketingPlan.total || 0;
+            document.getElementById('plan-realisasi').textContent = homeData.cardMarketingPlan.realisasi || 0;
+            document.getElementById('plan-proses').textContent = homeData.cardMarketingPlan.onProses || 0;
+            document.getElementById('plan-draft').textContent = homeData.cardMarketingPlan.draft || 0;
+            document.getElementById('plan-batal').textContent = homeData.cardMarketingPlan.batal || 0;
         }
 
-        // [DIKEMBALIKAN] Fungsi untuk mengisi top list
         function fillTopLists(homeData) {
             const top5List = document.getElementById('top5-request-list');
             top5List.innerHTML = '';
@@ -241,7 +256,6 @@
             }
         }
 
-        // [DIKEMBALIKAN] Fungsi untuk merender grafik
         function renderCharts(homeData) {
             const chartOptions = {
                 responsive: true,
@@ -271,7 +285,6 @@
             });
         }
        
-        // --- Event Listener Lainnya ---
         logoutButton.addEventListener('click', e => { e.preventDefault(); sessionStorage.removeItem('loggedInUser'); window.location.replace('index.html'); });
         themeCheckbox.addEventListener('change', function() { if (this.checked) { document.body.classList.replace('light-mode', 'dark-mode'); localStorage.setItem('theme', 'dark'); } else { document.body.classList.replace('dark-mode', 'light-mode'); localStorage.setItem('theme', 'light'); } });
         hamburgerButton.addEventListener('click', () => { sidebar.classList.add('show'); overlay.classList.add('show'); });
@@ -287,5 +300,3 @@
     </script>
 </body>
 </html>
-
-
