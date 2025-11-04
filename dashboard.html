@@ -155,8 +155,8 @@
             try {
                 const user = JSON.parse(userDataString);
                 userNameEl.textContent = user.nama_lengkap;
-                loadDashboardData(user.id_role); // Memuat menu
-                initHomePage(); // Memuat konten halaman utama
+                loadDashboardData(user.id_role);
+                initHomePage(); // Langsung panggil fungsi untuk memuat konten utama
             } catch (error) {
                 console.error("Data sesi rusak:", error);
                 sessionStorage.removeItem('loggedInUser');
@@ -244,3 +244,68 @@
             top4MarketingList.innerHTML = '';
             if (homeData.top4Marketing && homeData.top4Marketing.length > 0) {
                 homeData.top4Marketing.forEach(item => {
+                    top4MarketingList.innerHTML += `<li><span class="list-name">${item.name}</span> <span class="list-count">${item.count} Aplikasi</span></li>`;
+                });
+            } else {
+                top4MarketingList.innerHTML = '<li>Tidak ada data.</li>';
+            }
+        }
+
+        function renderCharts(homeData) {
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    datalabels: {
+                        anchor: 'end',
+                        align: 'top',
+                        color: getComputedStyle(document.body).getPropertyValue('--text-primary'),
+                        font: { weight: 'bold' }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary'), stepSize: 1 }, grid: { color: getComputedStyle(document.body).getPropertyValue('--border') } },
+                    x: { ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary') }, grid: { display: false } }
+                }
+            };
+
+            const appChartData = homeData.appChart;
+            const ctxApp = document.getElementById('appChart').getContext('2d');
+            if(window.myAppChart) window.myAppChart.destroy();
+            window.myAppChart = new Chart(ctxApp, {
+                type: 'bar',
+                data: appChartData,
+                options: chartOptions,
+                plugins: [ChartDataLabels]
+            });
+
+            const planChartData = homeData.planChart;
+            const ctxPlan = document.getElementById('planChart').getContext('2d');
+            if(window.myPlanChart) window.myPlanChart.destroy();
+            window.myPlanChart = new Chart(ctxPlan, {
+                type: 'bar',
+                data: planChartData,
+                options: chartOptions,
+                plugins: [ChartDataLabels]
+            });
+        }
+       
+        // --- Sisa fungsi (logout, dark mode, hamburger) ---
+        logoutButton.addEventListener('click', (e) => { e.preventDefault(); sessionStorage.removeItem('loggedInUser'); window.location.replace('index.html'); });
+        themeCheckbox.addEventListener('change', function() { if(this.checked) { document.body.classList.replace('light-mode', 'dark-mode'); localStorage.setItem('theme', 'dark'); } else { document.body.classList.replace('dark-mode', 'light-mode'); localStorage.setItem('theme', 'light'); } });
+        hamburgerButton.addEventListener('click', () => { sidebar.classList.add('show'); overlay.classList.add('show'); });
+        function closeSidebar() { sidebar.classList.remove('show'); overlay.classList.remove('show'); }
+        overlay.addEventListener('click', closeSidebar);
+        document.querySelector('.sidebar').addEventListener('click', e => {
+            const navItem = e.target.closest('.nav-item');
+            if (window.innerWidth <= 992 && navItem) {
+                if (!navItem.id && !navItem.closest('.theme-switch-wrapper')) {
+                    closeSidebar();
+                }
+            }
+        });
+    
+    </script>
+</body>
+</html>
