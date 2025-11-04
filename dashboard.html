@@ -8,57 +8,56 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script> <!-- Tambahkan plugin ini -->
 </head>
 <body class="light-mode dashboard-page">
 
     <div class="dashboard-layout">
+        <!-- ===== SIDEBAR (MENU KIRI) ===== -->
         <aside class="sidebar">
             <div class="sidebar-header">
+                <i class="fa-solid fa-chart-line"></i>
                 <span class="logo-text">Dashboard</span>
             </div>
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item active"><i class="fa-solid fa-house"></i><span>Halaman Utama</span></a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-file-pen"></i><span>Register Aplikasi</span></a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-truck"></i><span>Register Pengiriman</span></a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-hand-holding-dollar"></i><span>Register Klaim</span></a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-calculator"></i><span>Simulasi Premi</span></a>
-                <h6 class="nav-title">ADMINISTRASI</h6>
-                <a href="#" class="nav-item"><i class="fa-solid fa-users-cog"></i><span>Pengaturan User</span></a>
-                <a href="#" class="nav-item"><i class="fa-solid fa-user-shield"></i><span>Pengaturan Role</span></a>
+                <!-- Konten sidebar akan diisi oleh JavaScript -->
+                <p style="padding: 20px; color: var(--text-secondary);">Memuat menu...</p>
             </nav>
             <div class="sidebar-footer">
                 <div class="theme-switch-wrapper">
                     <label class="theme-switch" for="theme-checkbox">
                         <input type="checkbox" id="theme-checkbox" />
-                        <div class="slider round"><i class="fa-solid fa-sun sun-icon"></i><i class="fa-solid fa-moon moon-icon"></i></div>
+                        <div class="slider round"></div>
                     </label>
-                    <span>Dark Mode</span>
                 </div>
                 <a href="#" id="logout-button" class="nav-item"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
             </div>
         </aside>
 
+        <!-- ===== KONTEN UTAMA (KANAN) ===== -->
         <div class="main-content">
             <header class="header">
                 <div class="header-left">
                     <button id="hamburger-button" class="hamburger-btn"><i class="fa-solid fa-bars"></i></button>
                     <h1 class="header-title">Halaman Utama</h1>
                 </div>
-                <div id="user-profile" class="header-right">
-                    <span id="user-name">Memuat...</span>
-                    <i class="fa-solid fa-user-circle"></i>
+                <div class="header-right">
+                    <div class="search-bar">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" placeholder="Cari...">
+                    </div>
+                    <div class="user-profile">
+                        <span id="user-name">Memuat...</span>
+                        <img src="https://i.imgur.com/L4y3gJ4.png" alt="Avatar" class="user-avatar">
+                    </div>
                 </div>
             </header>
 
             <main id="dashboard-content" class="content-area">
-                <!-- [BARU] Baris untuk Kartu Ringkasan -->
+                <!-- Baris untuk Kartu Ringkasan -->
                 <div class="card-row">
-                    <!-- Card 1: Register Aplikasi -->
                     <div class="card summary-card">
-                        <div class="card-header">
-                            <h3>Total Register Aplikasi</h3>
-                            <i class="fa-solid fa-file-pen card-icon"></i>
-                        </div>
+                        <div class="card-header"><h3>Total Register Aplikasi</h3><i class="fa-solid fa-file-pen card-icon"></i></div>
                         <div class="card-body">
                             <h1 id="app-total">...</h1>
                             <div class="sub-stats">
@@ -68,13 +67,8 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Card 2: Pengiriman Polis -->
                     <div class="card summary-card">
-                        <div class="card-header">
-                            <h3>Total Pengiriman Polis</h3>
-                            <i class="fa-solid fa-truck card-icon"></i>
-                        </div>
+                        <div class="card-header"><h3>Total Pengiriman Polis</h3><i class="fa-solid fa-truck card-icon"></i></div>
                         <div class="card-body">
                             <h1 id="ship-total">...</h1>
                             <div class="sub-stats">
@@ -84,13 +78,8 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Card 3: Register Klaim -->
                     <div class="card summary-card">
-                        <div class="card-header">
-                            <h3>Total Register Klaim</h3>
-                            <i class="fa-solid fa-hand-holding-dollar card-icon"></i>
-                        </div>
+                        <div class="card-header"><h3>Total Register Klaim</h3><i class="fa-solid fa-hand-holding-dollar card-icon"></i></div>
                         <div class="card-body">
                             <h1 id="claim-total">...</h1>
                             <div class="sub-stats">
@@ -100,13 +89,8 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- Card 4: Marketing Plan -->
                     <div class="card summary-card">
-                        <div class="card-header">
-                            <h3>Total Marketing Plan</h3>
-                            <i class="fa-solid fa-bullhorn card-icon"></i>
-                        </div>
+                        <div class="card-header"><h3>Total Marketing Plan</h3><i class="fa-solid fa-bullhorn card-icon"></i></div>
                         <div class="card-body">
                             <h1 id="plan-total">...</h1>
                             <div class="sub-stats">
@@ -119,53 +103,37 @@
                     </div>
                 </div>
 
-                <!-- Nanti baris untuk Grafik dan Top List akan ditambahkan di sini -->
+                <!-- Baris untuk Top List dan Grafik -->
                 <div class="card-row" style="margin-top: 30px;">
-                    <!-- Kolom Kiri: Top Lists -->
                     <div class="card-column">
-                        <!-- Card Top 5 Request Name -->
                         <div class="card list-card">
-                            <div class="card-header">
-                                <h3>Top 5 Request Name</h3>
-                            </div>
-                            <div class="card-body">
-                                <ul id="top5-request-list" class="top-list">
-                                    <li>Memuat...</li>
-                                </ul>
-                            </div>
+                            <div class="card-header"><h3>Top 5 Request Name</h3></div>
+                            <div class="card-body"><ul id="top5-request-list" class="top-list"><li>Memuat...</li></ul></div>
                         </div>
-                        <!-- Card Top 4 Marketing -->
                         <div class="card list-card">
-                            <div class="card-header">
-                                <h3>Top 4 Marketing Favorit</h3>
-                            </div>
-                            <div class="card-body">
-                                <ul id="top4-marketing-list" class="top-list">
-                                    <li>Memuat...</li>
-                                </ul>
-                            </div>
+                            <div class="card-header"><h3>Top 4 Marketing Favorit</h3></div>
+                            <div class="card-body"><ul id="top4-marketing-list" class="top-list"><li>Memuat...</li></ul></div>
                         </div>
                     </div>
                     
-                    <!-- Kolom Kanan: Grafik -->
-                     <div class="card-column" style="grid-column: span 2;">
-                        <!-- Grafik 1: Aplikasi vs Marketing -->
+                    <div class="card-column" style="grid-column: span 2;">
                         <div class="card chart-card">
                             <div class="card-header"><h3>Aplikasi per Marketing</h3></div>
                             <div class="card-body"><canvas id="appChart"></canvas></div>
                         </div>
-                        <!-- Grafik 2: Plan vs Marketing -->
                         <div class="card chart-card">
                             <div class="card-header"><h3>Plan per Marketing</h3></div>
                             <div class="card-body"><canvas id="planChart"></canvas></div>
                         </div>
                     </div>
                 </div>
-     </main>
-</div>
+            </main>
+        </div>
         <div class="overlay"></div>
     </div>
+
     <script>
+        // --- Elemen UI ---
         const userNameEl = document.getElementById('user-name');
         const sidebarNav = document.querySelector('.sidebar-nav');
         const dashboardContent = document.getElementById('dashboard-content');
@@ -177,7 +145,8 @@
         
         const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
 
-         window.onload = () => {
+        // --- Fungsi yang berjalan saat halaman dimuat ---
+        window.onload = () => {
             const userDataString = sessionStorage.getItem('loggedInUser');
             if (!userDataString) {
                 window.location.replace('index.html');
@@ -186,9 +155,9 @@
             try {
                 const user = JSON.parse(userDataString);
                 userNameEl.textContent = user.nama_lengkap;
-                // Panggil fungsi utama untuk memuat semua data
                 loadDashboardData(user.id_role);
             } catch (error) {
+                console.error("Data sesi rusak:", error);
                 sessionStorage.removeItem('loggedInUser');
                 window.location.replace('index.html');
             }
@@ -199,10 +168,11 @@
             }
         };
 
+        /**
+         * Fungsi utama untuk memuat semua data dashboard.
+         */
         function loadDashboardData(roleId) {
-            sidebarNav.innerHTML = '<p style="padding: 20px; color: var(--text-secondary);">Memuat menu...</p>';
-
-            // Panggilan API #1: Untuk mendapatkan menu sidebar dinamis
+            // Panggilan API #1: Untuk sidebar dinamis
             fetch(`${webAppUrl}?action=getDashboardData&role_id=${roleId}`)
                 .then(res => res.json())
                 .then(data => {
@@ -211,13 +181,11 @@
                     } else {
                         sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Gagal memuat menu.</p>`;
                     }
-                })
-                .catch(err => {
-                    console.error("Gagal memuat menu:", err);
+                }).catch(err => {
                     sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Error koneksi menu.</p>`;
                 });
 
-            // Panggilan API #2: Untuk mendapatkan semua konten halaman utama
+            // Panggilan API #2: Untuk semua konten halaman utama
             fetch(`${webAppUrl}?action=getHomePageData`)
                 .then(res => res.json())
                 .then(result => {
@@ -227,30 +195,25 @@
                     
                     const homeData = result.data;
                     
-                    // --- Isi Semua Kartu ---
-
-                    // Card 1: Register Aplikasi
+                    // Isi Kartu Ringkasan
                     const card1 = homeData.cardRegisterAplikasi;
                     document.getElementById('app-total').textContent = card1.total || 0;
                     document.getElementById('app-realisasi').textContent = card1.realisasi || 0;
                     document.getElementById('app-pending').textContent = card1.pending || 0;
                     document.getElementById('app-batal').textContent = card1.batal || 0;
                     
-                    // Card 2: Pengiriman Polis
                     const card2 = homeData.cardPengirimanPolis;
                     document.getElementById('ship-total').textContent = card2.total || 0;
                     document.getElementById('ship-terkirim').textContent = card2.terkirim || 0;
                     document.getElementById('ship-perjalanan').textContent = card2.dalamPerjalanan || 0;
                     document.getElementById('ship-return').textContent = card2.return || 0;
 
-                    // Card 3: Register Klaim
                     const card3 = homeData.cardRegisterKlaim;
                     document.getElementById('claim-total').textContent = card3.total || 0;
                     document.getElementById('claim-selesai').textContent = card3.selesai || 0;
                     document.getElementById('claim-proses').textContent = card3.onProses || 0;
                     document.getElementById('claim-ditolak').textContent = card3.ditolak || 0;
 
-                    // Card 4: Marketing Plan
                     const card4 = homeData.cardMarketingPlan;
                     document.getElementById('plan-total').textContent = card4.total || 0;
                     document.getElementById('plan-realisasi').textContent = card4.realisasi || 0;
@@ -258,7 +221,7 @@
                     document.getElementById('plan-draft').textContent = card4.draft || 0;
                     document.getElementById('plan-batal').textContent = card4.batal || 0;
                     
-                    // Card Top 5 Request Name
+                    // Isi Kartu Top List
                     const top5RequestList = document.getElementById('top5-request-list');
                     top5RequestList.innerHTML = '';
                     if (homeData.top5RequestName && homeData.top5RequestName.length > 0) {
@@ -269,7 +232,6 @@
                         top5RequestList.innerHTML = '<li>Tidak ada data.</li>';
                     }
                     
-                    // Card Top 4 Marketing Favorit
                     const top4MarketingList = document.getElementById('top4-marketing-list');
                     top4MarketingList.innerHTML = '';
                     if (homeData.top4Marketing && homeData.top4Marketing.length > 0) {
@@ -280,13 +242,12 @@
                         top4MarketingList.innerHTML = '<li>Tidak ada data.</li>';
                     }
 
-                    // Render Grafik
+                    // Render Grafik Aplikasi
                     const appChartData = homeData.appChart;
                     const ctxApp = document.getElementById('appChart').getContext('2d');
                     if(window.myAppChart) window.myAppChart.destroy();
-                    window.myAppChart = Chart(ctxApp, {
-                        type: 'bar',
-                        data: chartData,
+                    window.myAppChart = new Chart(ctxApp, {
+                        type: 'bar', data: appChartData,
                         options: {
                             responsive: true, maintainAspectRatio: false,
                             plugins: { legend: { display: false } },
@@ -296,13 +257,13 @@
                             }
                         }
                     });
-                    // --- Grafik 2: Plan per Marketing ---
+
+                    // Render Grafik Plan
                     const planChartData = homeData.planChart;
                     const ctxPlan = document.getElementById('planChart').getContext('2d');
-                    if(window.myPlanChart) window.myPlanChart.destroy(); // Hapus grafik lama jika ada
+                    if(window.myPlanChart) window.myPlanChart.destroy();
                     window.myPlanChart = new Chart(ctxPlan, {
-                        type: 'bar',
-                        data: planChartData,
+                        type: 'bar', data: planChartData,
                         options: {
                             responsive: true, maintainAspectRatio: false,
                             plugins: { legend: { display: false } },
@@ -315,62 +276,18 @@
                 })
                 .catch(err => {
                     console.error("Gagal memuat data konten:", err);
-                    document.getElementById('dashboard-content').innerHTML = `<p style="color: red;">Gagal memuat konten dashboard. Silakan refresh halaman.</p>`;
+                    dashboardContent.innerHTML = `<p style="color: red;">Gagal memuat konten dashboard. Silakan refresh halaman.</p>`;
                 });
         }
        
-
-        logoutButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            sessionStorage.removeItem('loggedInUser');
-            window.location.replace('index.html');
-        });
-        
-        themeCheckbox.addEventListener('change', function() {
-            if(this.checked) {
-                document.body.classList.replace('light-mode', 'dark-mode');
-                localStorage.setItem('theme', 'dark');
-            } else {
-                document.body.classList.replace('dark-mode', 'light-mode');
-                localStorage.setItem('theme', 'light');
-            }
-        });
-
-        hamburgerButton.addEventListener('click', () => {
-            sidebar.classList.add('show');
-            overlay.classList.add('show');
-        });
-
-        function closeSidebar() {
-            sidebar.classList.remove('show');
-            overlay.classList.remove('show');
-        }
-
+        // --- Sisa fungsi (logout, dark mode, hamburger) ---
+        logoutButton.addEventListener('click', (e) => { e.preventDefault(); sessionStorage.removeItem('loggedInUser'); window.location.replace('index.html'); });
+        themeCheckbox.addEventListener('change', function() { if(this.checked) { document.body.classList.replace('light-mode', 'dark-mode'); localStorage.setItem('theme', 'dark'); } else { document.body.classList.replace('dark-mode', 'light-mode'); localStorage.setItem('theme', 'light'); } });
+        hamburgerButton.addEventListener('click', () => { sidebar.classList.add('show'); overlay.classList.add('show'); });
+        function closeSidebar() { sidebar.classList.remove('show'); overlay.classList.remove('show'); }
         overlay.addEventListener('click', closeSidebar);
-        
-        document.querySelectorAll('.sidebar .nav-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                if (window.innerWidth <= 992) {
-                    if (e.currentTarget.id !== 'logout-button' && !e.currentTarget.closest('.theme-switch-wrapper')) {
-                        closeSidebar();
-                    }
-                }
-            });
-        });
+        document.querySelectorAll('.sidebar .nav-item').forEach(item => { item.addEventListener('click', (e) => { if (window.innerWidth <= 992) { if (e.currentTarget.id !== 'logout-button' && !e.currentTarget.closest('.theme-switch-wrapper')) { closeSidebar(); } } }); });
     
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
