@@ -280,14 +280,31 @@
                     }
 
                     // Render Grafik
-                    const chartData = homeData.marketingChart;
-                    const ctx = document.getElementById('marketingChart').getContext('2d');
-                    new Chart(ctx, {
+                    const appChartData = homeData.appChart;
+                    const ctxApp = document.getElementById('appChart').getContext('2d');
+                    if(window.myAppChart) window.myAppChart.destroy();
+                    window.myAppChart = Chart(ctxApp, {
                         type: 'bar',
                         data: chartData,
                         options: {
-                            responsive: true,
-                            plugins: { legend: { position: 'top', labels: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary') } } },
+                            responsive: true, maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: { beginAtZero: true, ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary'), stepSize: 1 }, grid: { color: getComputedStyle(document.body).getPropertyValue('--border') } },
+                                x: { ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary') }, grid: { display: false } }
+                            }
+                        }
+                    });
+                    // --- Grafik 2: Plan per Marketing ---
+                    const planChartData = homeData.planChart;
+                    const ctxPlan = document.getElementById('planChart').getContext('2d');
+                    if(window.myPlanChart) window.myPlanChart.destroy(); // Hapus grafik lama jika ada
+                    window.myPlanChart = new Chart(ctxPlan, {
+                        type: 'bar',
+                        data: planChartData,
+                        options: {
+                            responsive: true, maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
                             scales: {
                                 y: { beginAtZero: true, ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary'), stepSize: 1 }, grid: { color: getComputedStyle(document.body).getPropertyValue('--border') } },
                                 x: { ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary') }, grid: { display: false } }
@@ -343,6 +360,7 @@
     </script>
 </body>
 </html>
+
 
 
 
