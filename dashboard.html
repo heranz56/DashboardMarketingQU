@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
@@ -21,6 +20,7 @@
                 <a href="#" id="logout-button" class="nav-item"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></a>
             </div>
         </aside>
+
         <div class="main-content">
             <header class="header">
                 <div class="header-left"><button id="hamburger-button" class="hamburger-btn"><i class="fa-solid fa-bars"></i></button><h1 class="header-title">Halaman Utama</h1></div>
@@ -41,22 +41,18 @@
         const hamburgerButton = document.getElementById('hamburger-button');
         const sidebar = document.querySelector('.sidebar');
         const overlay = document.querySelector('.overlay');
-        
         const webAppUrl = 'https://script.google.com/macros/s/AKfycbxZxym5UgUwJn4-OAMKSgVuoGmWQ0NlrrP8AFaLMbkH1h83mBxXzSxDUuA3k-lADymD/exec';
         let currentUser;
 
         // --- Fungsi Utama ---
         window.onload = () => {
             const userDataString = sessionStorage.getItem('loggedInUser');
-            if (!userDataString) {
-                return void window.location.replace('index.html');
-            }
+            if (!userDataString) return void window.location.replace('index.html');
             try {
                 currentUser = JSON.parse(userDataString);
                 userNameEl.textContent = currentUser.nama_lengkap;
                 loadInitialData(currentUser.id_role);
             } catch (e) {
-                console.error("Data sesi rusak:", e);
                 sessionStorage.removeItem('loggedInUser');
                 window.location.replace('index.html');
             }
@@ -74,11 +70,13 @@
                     if (data.status === 'success') {
                         sidebarNav.innerHTML = data.sidebarHtml;
                         setupMenuNavigation();
+                        // [PERBAIKAN] Panggil loadPageContent DARI DALAM .then()
                         loadPageContent('halamanUtama');
                     } else {
                         sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Gagal memuat menu.</p>`;
                     }
-                }).catch(err => {
+                })
+                .catch(err => {
                     sidebarNav.innerHTML = `<p style="padding: 20px; color: red;">Error koneksi.</p>`;
                 });
         }
@@ -301,3 +299,4 @@
     </script>
 </body>
 </html>
+
