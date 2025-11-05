@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <!-- Tambahkan Toastify CSS untuk notifikasi -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 </head>
 <body class="dark-mode dashboard-page">
 
@@ -25,12 +27,106 @@
         <div class="main-content">
             <header class="header">
                 <div class="header-left"><button id="hamburger-button" class="hamburger-btn"><i class="fa-solid fa-bars"></i></button><h1 class="header-title">Halaman Utama</h1></div>
-                <div class="header-right"><div class="search-bar"><i class="fa-solid fa-search"></i><input type="text" placeholder="Cari..."></div><div class="user-profile"><span id="user-name">Memuat...</span><i class="fa-solid fa-user-circle user-avatar"></i></div></div>
+                <div class="header-right">
+                    <!-- Search bar utama di header, ini tidak akan digunakan untuk pencarian tabel spesifik -->
+                    <div class="search-bar"><i class="fa-solid fa-search"></i><input type="text" placeholder="Cari..."></div>
+                    <div class="user-profile"><span id="user-name">Memuat...</span><i class="fa-solid fa-user-circle user-avatar"></i></div>
+                </div>
             </header>
-            <main id="dashboard-content" class="content-area"><p>Memuat konten...</p></main>
+            <main id="dashboard-content" class="content-area">
+                <!-- Konten halaman akan dimuat di sini -->
+                <p>Memuat konten...</p>
+            </main>
         </div>
         <div class="overlay"></div>
     </div>
+
+    <!-- Modal untuk Tambah Register Aplikasi -->
+    <div id="add-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4>Tambah Data Register Aplikasi</h4>
+                <span class="close-modal">&times;</span>
+            </div>
+            <form id="form-Register-aplikasi">
+                <div class="form-grid">
+                    <div class="input-group">
+                        <label for="modal-tanggal">Tanggal</label>
+                        <input type="date" id="modal-tanggal" name="tanggal" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-type-business">Type Business</label>
+                        <select id="modal-type-business" name="type_business" required>
+                            <option value="">Pilih Type Business</option>
+                            <option value="New Business">New Business</option>
+                            <option value="Renewal">Renewal</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-segment">Segment</label>
+                        <select id="modal-segment" name="segment" required>
+                            <option value="">Pilih Segment</option>
+                            <option value="Retail">Retail</option>
+                            <option value="Corporate">Corporate</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-request-type">Request Type</label>
+                        <select id="modal-request-type" name="request_type" required>
+                            <option value="">Pilih Request Type</option>
+                            <option value="General Retail">General Retail</option>
+                            <option value="Bank">Bank</option>
+                            <option value="Dealer">Dealer</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-request-name">Request Name</label>
+                        <input type="text" id="modal-request-name" name="request_name" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-uraian">Uraian</label>
+                        <textarea id="modal-uraian" name="uraian" rows="3"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-ex-polis">Ex Polis</label>
+                        <input type="text" id="modal-ex-polis" name="ex_polis">
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-no-request">No Request</label>
+                        <input type="text" id="modal-no-request" name="no_request">
+                    </div>
+                     <div class="input-group">
+                        <label for="modal-no-polis">No Polis</label>
+                        <input type="text" id="modal-no-polis" name="no_polis">
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-marketing">Marketing</label>
+                        <input type="text" id="modal-marketing" name="marketing">
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-result">Result</label>
+                        <select id="modal-result" name="result" required>
+                            <option value="Pending">Pending</option>
+                            <option value="Menunggu Respon">Menunggu Respon</option>
+                            <option value="Realisasi">Realisasi</option>
+                            <option value="Batal">Batal</option>
+                            <!-- Tambahkan opsi lain sesuai kebutuhan -->
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label for="modal-keterangan">Keterangan</label>
+                        <textarea id="modal-keterangan" name="keterangan" rows="3"></textarea>
+                    </div>
+                    <!-- Hidden field untuk action -->
+                    <input type="hidden" name="action" value="addRegisterAplikasi">
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <script>
         // --- Elemen UI ---
@@ -313,6 +409,7 @@
     </script>
 </body>
 </html>
+
 
 
 
