@@ -142,10 +142,28 @@
         }
         
         function initRegisterAplikasiPage(pageData) {
+            console.log("pageData diterima di initRegisterAplikasiPage:", pageData); // Tambahkan ini untuk debug
             const searchInput = document.getElementById('search-input');
             const tableBody = document.querySelector('#data-table tbody');
             const tableHead = document.querySelector('#data-table thead');
             let allData = pageData.data || [];
+            const headers = pageData.headers || [];
+            // Debugging: Periksa apakah headers kosong
+    if (headers.length === 0 && allData.length > 0) { // Jika ada data tapi tanpa header
+        console.warn("Data diterima, tetapi tidak ada header untuk tabel Register Aplikasi. Mencoba membuat header dari kunci objek pertama.");
+        // Opsi: Coba buat header dari kunci objek pertama jika ada data
+        if (allData.length > 0) {
+            // headers = Object.keys(allData[0]); // Ini bisa jadi alternatif jika headers memang tidak dikirim
+        } else {
+            tableHead.innerHTML = `<tr><th>Tidak ada data.</th></tr>`;
+            tableBody.innerHTML = `<tr><td colspan="1" style="text-align:center; padding: 20px;">Tidak ada data atau header yang ditemukan.</td></tr>`;
+            return;
+        }
+    } else if (headers.length === 0 && allData.length === 0) {
+         tableHead.innerHTML = `<tr><th>Tidak ada data.</th></tr>`;
+         tableBody.innerHTML = `<tr><td colspan="1" style="text-align:center; padding: 20px;">Tidak ada data atau header yang ditemukan.</td></tr>`;
+         return;
+    }
 
             function renderTable(dataToRender) {
                 tableHead.innerHTML = `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
@@ -165,17 +183,17 @@
                 });
             }
 
-            rrenderTable(allData.reverse()); // Tampilkan data awal (terbaru di atas)
+            renderTable(allData.reverse()); // <-- Perbaiki typo dari rrenderTable menjadi renderTable
 
-            searchInput.addEventListener('input', () => {
-                const searchTerm = searchInput.value.toLowerCase();
-                const filteredData = allData.filter(row => 
-                    Object.values(row).some(val => 
-                        String(val).toLowerCase().includes(searchTerm)
-                    )
-                );
-                renderTable(filteredData);
-            });
+    searchInput.addEventListener('input', () => {
+        const searchTerm = searchInput.value.toLowerCase();
+        const filteredData = allData.filter(row => 
+            Object.values(row).some(val => 
+                String(val).toLowerCase().includes(searchTerm)
+            )
+        );
+        renderTable(filteredData);
+    });
 
             const modal = document.getElementById('add-modal');
             document.getElementById('add-register-btn').onclick = () => modal.style.display = "block";
@@ -295,6 +313,7 @@
     </script>
 </body>
 </html>
+
 
 
 
