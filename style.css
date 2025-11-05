@@ -326,75 +326,273 @@ input:checked + .slider:before { transform: translateX(20px); }
 .full-height-card {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - var(--header-height) - 60px); /* Tinggi penuh dikurangi header & padding */
+    height: calc(100vh - 80px - 60px); /* 80px header, 60px total padding area */
+    /* Pastikan tinggi ini cukup agar tidak ada scroll vertikal ganda di main-content */
 }
 
-.header-actions { display: flex; gap: 15px; align-items: center; }
+.card-header h3 {
+    font-size: 20px; /* Ukuran font judul halaman */
+    font-weight: 600;
+}
 
-.search-box {
-    padding: 8px 12px;
+.header-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 20px;
+    justify-content: space-between; /* Untuk menempatkan search box dan tombol di ujung */
+    flex-wrap: wrap; /* Agar responsif jika layar kecil */
+}
+
+.search-container {
+    position: relative;
+    width: 350px; /* Lebar search box diperpanjang */
+    max-width: 100%; /* Agar tidak melebihi lebar kontainer di mobile */
+}
+
+.search-container .search-input {
+    padding: 8px 12px 8px 35px; /* Padding kiri untuk ikon */
     border-radius: 6px;
     border: 1px solid var(--border);
     background-color: var(--bg);
     color: var(--text-primary);
-    width: 250px;
+    width: 100%; /* Agar mengisi lebar container */
+    box-sizing: border-box;
+    font-size: 14px;
 }
 
-.table-container { flex-grow: 1; overflow: auto; }
-#data-table { width: 100%; border-collapse: collapse; }
+.search-container .search-input::placeholder {
+    color: var(--d-text-secondary-light); /* Warna placeholder */
+    opacity: 0.8;
+}
+
+.search-container .search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+/* Modifikasi tombol tambah agar lebih kecil */
+.add-button {
+    background-color: var(--d-primary-color);
+    color: white;
+    padding: 8px 15px; /* Padding lebih kecil */
+    border-radius: 8px;
+    font-size: 14px; /* Ukuran font lebih kecil */
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap; /* Mencegah teks terpotong */
+}
+
+.add-button:hover {
+    background-color: #4338CA;
+}
+
+
+.table-container {
+    flex-grow: 1; /* Agar tabel mengisi sisa ruang vertikal */
+    overflow-x: auto; /* Scroll horizontal hanya di container tabel */
+    margin-bottom: 20px; /* Jarak dengan paginasi */
+    -webkit-overflow-scrolling: touch; /* Untuk scroll yang lebih halus di iOS */
+}
+#data-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1200px; /* Minimal lebar tabel untuk scroll horizontal */
+}
 #data-table th, #data-table td {
     padding: 12px 15px;
     border-bottom: 1px solid var(--border);
     text-align: left;
     font-size: 14px;
     white-space: nowrap; /* Mencegah teks turun baris */
+    color: var(--text-primary); /* Pastikan warna teks sesuai tema */
 }
 
-#data-table thead { position: sticky; top: 0; background-color: var(--surface); }
-#data-table th { font-weight: 600; color: var(--text-secondary); }
+#data-table thead {
+    position: sticky;
+    top: 0;
+    background-color: var(--surface);
+    z-index: 2; /* Pastikan header di atas konten scrollable */
+}
+#data-table th {
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer; /* Menunjukkan bisa disortir */
+    position: relative;
+    user-select: none; /* Mencegah teks header terseleksi saat klik untuk sort */
+}
+#data-table th:hover {
+    background-color: var(--bg);
+}
+#data-table th .sort-icon {
+    margin-left: 8px;
+    font-size: 10px;
+    color: var(--text-secondary);
+    transition: transform 0.2s ease-out; /* Animasi ikon sort */
+}
+/* Gaya ikon sort aktif */
+#data-table th.sorted-asc .sort-icon { transform: rotate(0deg); }
+#data-table th.sorted-desc .sort-icon { transform: rotate(180deg); }
+
 #data-table tbody tr:hover { background-color: var(--bg); }
 
-/* Gaya untuk Modal (Popup) */
+/* Gaya untuk kolom aksi */
+#data-table td.actions {
+    text-align: center;
+    white-space: nowrap;
+    padding: 8px 10px; /* Padding disesuaikan untuk ikon */
+}
+
+#data-table td.actions .action-btn {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 15px; /* Ukuran ikon disesuaikan */
+    margin: 0 4px; /* Jarak antar ikon */
+    cursor: pointer;
+    transition: color 0.2s, transform 0.2s;
+}
+#data-table td.actions .action-btn:hover {
+    color: var(--d-primary-color);
+    transform: translateY(-2px); /* Efek hover kecil */
+}
+#data-table td.actions .action-btn.view-btn:hover { color: #2196F3; } /* Biru */
+#data-table td.actions .action-btn.edit-btn:hover { color: #FFC107; } /* Kuning */
+#data-table td.actions .action-btn.delete-btn:hover { color: #F44336; } /* Merah */
+
+
+/* Gaya Paginasi */
+.pagination {
+    display: flex;
+    justify-content: flex-end; /* Pindahkan paginasi ke kanan */
+    align-items: center;
+    margin-top: 15px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    flex-wrap: wrap; /* Agar responsif jika layar kecil */
+}
+
+.pagination button {
+    background-color: var(--bg);
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    margin: 0 5px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+    color: var(--text-primary);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color: var(--d-primary-color);
+    color: white;
+    border-color: var(--d-primary-color);
+}
+
+.pagination button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    background-color: var(--bg);
+    color: var(--text-secondary);
+    border-color: var(--border);
+}
+
+.pagination span {
+    margin: 0 10px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+/* Modal Styling Improvements */
 .modal {
-    display: none; position: fixed; z-index: 1001; left: 0; top: 0;
-    width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6);
+    display: none; /* Hide by default */
+    position: fixed;
+    z-index: 1001;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.6);
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* Mulai dengan opacity 0 */
+    transition: opacity 0.3s ease-out; /* Transisi opacity */
+}
+.modal.show {
+    display: flex; /* Show with flex for centering */
+    opacity: 1; /* Fade in */
 }
 .modal-content {
-    background-color: var(--surface); margin: 10% auto; padding: 20px;
-    border: 1px solid var(--border); width: 80%; max-width: 700px;
+    background-color: var(--surface);
+    margin: auto;
+    padding: 25px 30px; /* Padding sedikit lebih besar */
+    border: 1px solid var(--border);
+    width: 90%; /* Lebih lebar */
+    max-width: 700px;
     border-radius: 12px;
+    transform: translateY(-50px); /* Efek masuk dari atas */
+    transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
-.modal-header { display: flex; justify-content: space-between; align-items: center; 
-               border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; }
+.modal.show .modal-content {
+    transform: translateY(0); /* Geser ke posisi akhir */
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+}
 
 .modal-header h4 {
-    font-size: 18px;
+    font-size: 20px;
     margin: 0;
+    color: var(--text-primary);
 }
 
 .close-modal {
     color: var(--text-secondary);
-    font-size: 28px;
+    font-size: 30px; /* Ukuran ikon close lebih besar */
     font-weight: bold;
     cursor: pointer;
+    transition: color 0.2s;
 }
 .close-modal:hover { color: var(--text-primary); }
 
 .form-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsif grid */
     gap: 20px;
 }
 
-.form-grid .input-group.full-width {
-    grid-column: 1 / -1;
+.form-grid .input-group {
+    margin-bottom: 0; /* Hapus margin-bottom di sini karena gap sudah menangani */
 }
 
 .form-grid label {
-    font-size: 14px;
+    font-size: 13px; /* Ukuran font label lebih kecil */
     font-weight: 500;
     margin-bottom: 8px;
     color: var(--text-secondary);
+    display: block; /* Pastikan label selalu di atas input */
 }
 
 .form-grid input, .form-grid select, .form-grid textarea {
@@ -405,7 +603,14 @@ input:checked + .slider:before { transform: translateX(20px); }
     background-color: var(--bg);
     color: var(--text-primary);
     font-size: 14px;
+    box-sizing: border-box; /* Penting untuk konsistensi padding/border */
 }
+.form-grid input:focus, .form-grid select:focus, .form-grid textarea:focus {
+    outline: none;
+    border-color: var(--d-primary-color);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
 
 .form-actions {
     margin-top: 30px;
@@ -414,4 +619,33 @@ input:checked + .slider:before { transform: translateX(20px); }
     display: flex;
     justify-content: flex-end;
 }
+.form-actions .btn {
+    padding: 10px 20px;
+    font-size: 15px;
+}
 
+@media (max-width: 768px) {
+    .full-height-card {
+        height: auto; /* Biarkan tinggi otomatis di mobile */
+        min-height: calc(100vh - 80px - 40px); /* Ketinggian min agar tidak terlalu pendek */
+    }
+    .header-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .search-container {
+        width: 100%;
+        margin-bottom: 15px; /* Jarak antara search dan tombol tambah */
+    }
+    .add-button {
+        width: 100%;
+        justify-content: center;
+    }
+    .modal-content {
+        width: 95%; /* Lebih lebar di mobile */
+        margin: 20px auto; /* Margin atas/bawah */
+    }
+    .pagination {
+        justify-content: center; /* Paginasi di tengah mobile */
+    }
+}
